@@ -4,6 +4,7 @@ const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME } = process.env;
 
 const userModel = require("./models/userModel");
 const postsModel = require("./models/postsModel");
+const viewsModel = require("./models/viewsModel")
 
 const sequelize = new Sequelize(
   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
@@ -12,8 +13,9 @@ const sequelize = new Sequelize(
 
 userModel(sequelize);
 postsModel(sequelize);
+viewsModel(sequelize);
 
-const { user, posts } = sequelize.models;
+const { user, posts, views } = sequelize.models;
 
 user.hasMany(posts);
 posts.belongsTo(user);

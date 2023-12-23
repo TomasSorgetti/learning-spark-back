@@ -1,8 +1,9 @@
 const {
   createPostController,
-  getPosts,
   deletePostById,
   getPostById,
+  modifyPostById,
+  getOrderedPosts,
 } = require("../controllers/postsControllers");
 
 const createPostsHandler = async (req, res) => {
@@ -19,9 +20,10 @@ const createPostsHandler = async (req, res) => {
   }
 };
 
-const getPostsHandler = async (req, res) => {
+const getOrderedPostsHandler = async (req, res) => {
+  const { partialTitle, direction } = req.query;
   try {
-    const response = await getPosts();
+    const response = await getOrderedPosts(partialTitle, direction);
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -49,10 +51,31 @@ const deletePost = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+const modifyPost = async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.user;
+  const { text, image, card_image, card_title, card_text } = req.body;
+  try {
+    if (role === "admin") {
+      const response = await modifyPostById(
+        id,
+        text,
+        image,
+        card_image,
+        card_title,
+        card_text
+      );
+      res.status(200).json(response);
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
   createPostsHandler,
-  getPostsHandler,
   deletePost,
   getPostByIdHandler,
+  modifyPost,
+  getOrderedPostsHandler,
 };

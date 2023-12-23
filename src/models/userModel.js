@@ -11,6 +11,10 @@ module.exports = (sequelize) => {
         allowNull: false,
         autoIncrement: true,
       },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -23,6 +27,11 @@ module.exports = (sequelize) => {
       role: {
         type: DataTypes.STRING,
         defaultValue: "user",
+      },
+      deleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
     },
     {
