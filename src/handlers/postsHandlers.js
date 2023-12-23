@@ -21,9 +21,9 @@ const createPostsHandler = async (req, res) => {
 };
 
 const getOrderedPostsHandler = async (req, res) => {
-  const { partialTitle, direction } = req.query;
+  const { partialTitle, filter, direction } = req.query;
   try {
-    const response = await getOrderedPosts(partialTitle, direction);
+    const response = await getOrderedPosts(partialTitle,filter, direction);
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ error: error.message });
