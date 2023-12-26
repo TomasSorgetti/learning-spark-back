@@ -3,15 +3,15 @@ const {
   deletePostById,
   getPostById,
   modifyPostById,
-  getOrderedPosts,
+  getAllPosts,
 } = require("../controllers/postsControllers");
 
 const createPostsHandler = async (req, res) => {
   const { id, role } = req.user;
-  const { text, image, card_image, card_title, card_text } = req.body;
+  const { text, image, card_image, card_title, card_text,subj } = req.body;
   try {
     if (role === "admin") {
-      const response = await createPostController(text,image,card_image,card_title,card_text, id);
+      const response = await createPostController(text,image,card_image,card_title,card_text, id,subj);
       return res.status(200).json(response);
     }
     throw new Error("you dont have permition to post");
@@ -20,10 +20,10 @@ const createPostsHandler = async (req, res) => {
   }
 };
 
-const getOrderedPostsHandler = async (req, res) => {
-  const { partialTitle, filter, direction } = req.query;
+const getAllPostsHandler = async (req, res) => {
+  const { partialTitle,subj } = req.query;
   try {
-    const response = await getOrderedPosts(partialTitle,filter, direction);
+    const response = await getAllPosts(partialTitle, subj);
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -77,5 +77,5 @@ module.exports = {
   deletePost,
   getPostByIdHandler,
   modifyPost,
-  getOrderedPostsHandler,
+  getAllPostsHandler,
 };

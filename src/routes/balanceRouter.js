@@ -8,8 +8,8 @@ const {
 
 const balanceRouter = Router();
 
-balanceRouter.put("/income", verifyAccessToken, incomeHandler);
-balanceRouter.put("/expenses", verifyAccessToken, expensesHandler);
+balanceRouter.post("/income", verifyAccessToken, incomeHandler);
+balanceRouter.post("/expenses", verifyAccessToken, expensesHandler);
 balanceRouter.get("/", verifyAccessToken, getBalanceHandler);
 
 module.exports = balanceRouter;

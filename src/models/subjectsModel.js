@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Views = sequelize.define(
-    "views",
+  const Subject = sequelize.define(
+    "subject",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,18 +10,17 @@ module.exports = (sequelize) => {
         allowNull: false,
         autoIncrement: true,
       },
-      ip: {
+      subj: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
+        unique:true
       },
     },
     {
       timestamps: true,
       freezeTableName: true,
-      tableName: "views",
+      tableName: "subject",
     }
   );
 
-  return Views;
+  return Subject;
 };

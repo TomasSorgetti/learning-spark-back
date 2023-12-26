@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Views = sequelize.define(
-    "views",
+  const Income = sequelize.define(
+    "income",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,18 +10,17 @@ module.exports = (sequelize) => {
         allowNull: false,
         autoIncrement: true,
       },
-      ip: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
+      value: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
     },
     {
       timestamps: true,
       freezeTableName: true,
-      tableName: "views",
+      tableName: "income",
     }
   );
 
-  return Views;
+  return Income;
 };

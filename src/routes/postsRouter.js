@@ -5,7 +5,7 @@ const {
   deletePost,
   getPostByIdHandler,
   modifyPost,
-  getOrderedPostsHandler,
+  getAllPostsHandler,
 } = require("../handlers/postsHandlers");
 
 const postsRouter = Router();
@@ -13,7 +13,7 @@ const postsRouter = Router();
 postsRouter.post("/", verifyAccessToken, createPostsHandler);
 postsRouter.delete("/:id",verifyAccessToken, deletePost);
 postsRouter.put("/:id",verifyAccessToken, modifyPost);
-postsRouter.get("/", getOrderedPostsHandler);
+postsRouter.get("/", getAllPostsHandler);
 postsRouter.get("/:postId", getPostByIdHandler);
 
 module.exports = postsRouter;

@@ -1,38 +1,50 @@
-const { balance } = require("../db");
+const { Op } = require("sequelize");
+const { income, expenses } = require("../db");
 
 const incomeController = async (value) => {
-  const findBalance = await balance.findOne({ where: { id: 1 } });
-  if (!findBalance) {
-    throw new Error("balance do not exist");
+  if (value !== 0) {
+    return await income.create({ value });
   } else {
-    const integerValue = parseInt(value, 10);
-    findBalance.income += integerValue;
-    await findBalance.save();
-    return findBalance;
+    throw new Error("0 is not valid");
   }
 };
 const expensesController = async (value) => {
-  const findBalance = await balance.findOne({ where: { id: 1 } });
-  if (!findBalance) {
-    throw new Error("balance do not exist");
+  if (value !== 0) {
+    return await expenses.create({ value });
   } else {
-    const numericValue = parseFloat(value);
-    if (!isNaN(numericValue)) {
-      findBalance.expenses += numericValue;
-      await findBalance.save();
-      return findBalance;
-    } else {
-      throw new Error("is not a valid number ");
-    }
+    throw new Error("0 is not valid");
   }
 };
 const getBalanceController = async () => {
-  const findBalance = await balance.findAll();
-  if (findBalance.length === 0) {
-    const newBalance = await balance.create({ income: 0, expenses: 0 });
-    return newBalance;
+  const currentDate = new Date();
+  const lastYearDate = new Date(currentDate);
+  lastYearDate.setFullYear(currentDate.getFullYear() - 1);
+  const incomeFind = await income.findAll({
+    where: {
+      createdAt: {
+        [Op.between]: [lastYearDate, currentDate],
+      },
+    },
+  });
+  const expensesFind = await expenses.findAll({
+    where: {
+      createdAt: {
+        [Op.between]: [lastYearDate, currentDate],
+      },
+    },
+  });
+  if (incomeFind.length > 0 || expensesFind.length > 0) {
+    const totalIncome = incomeFind.reduce((sum, obj) => sum + obj.value, 0);
+    const totalExpenses = expensesFind.reduce((sum, obj) => sum + obj.value, 0);
+
+    return {
+      total: { totalIncome, totalExpenses },
+      incomes: incomeFind,
+      expenses: expensesFind,
+    };
+  } else {
+    throw new Error("No income or expenses found");
   }
-  return findBalance;
 };
 
 module.exports = {

@@ -16,7 +16,8 @@ module.exports = (sequelize) => {
       },
       image: {
         type: DataTypes.STRING,
-        defaultValue:"https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop",
+        defaultValue:
+          "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop",
       },
       card_title: {
         type: DataTypes.STRING,
@@ -28,7 +29,12 @@ module.exports = (sequelize) => {
       },
       card_image: {
         type: DataTypes.STRING,
-        defaultValue:"https://www.timeshighereducation.com/student/sites/default/files/istock-499343530.jpg",
+        defaultValue:
+          "https://www.timeshighereducation.com/student/sites/default/files/istock-499343530.jpg",
+      },
+      subjectId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
     },
     {

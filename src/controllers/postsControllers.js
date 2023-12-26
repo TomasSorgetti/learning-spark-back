@@ -1,4 +1,4 @@
-const { posts } = require("../db");
+const { posts, subject } = require("../db");
 const { Op } = require("sequelize");
 const createPostController = async (
   text,
@@ -6,35 +6,42 @@ const createPostController = async (
   card_image,
   card_title,
   card_text,
-  id
+  id,
+  subj
 ) => {
+  const subjectInstance = await subject.findOne({ where: { subj } })
+  if (!subjectInstance) {
+    throw new Error("Subject not found");
+  }
+  if (!subjectInstance.id) {
+    throw new Error("Invalid subject id");
+  }
   const Post = await posts.create({
     text,
     image,
     card_image,
     card_title,
     card_text,
+    subjectId: subjectInstance.id,
   });
+
   Post.setUser(id);
   return Post;
 };
-const getOrderedPosts = async (partialTitle, filter, direction) => {
-  let orderDirection = "ASC";
-  if (direction === "desc") {
-    orderDirection = "DESC";
+const getAllPosts = async (partialTitle, subj) => {
+  if (subj==="all") {
+    return await posts.findAll({
+      where: { card_title: { [Op.iLike]: partialTitle + "%" }}
+    });
   }
-  if (filter === "name") {
-    const res = await posts.findAll({
-      where: { card_title: { [Op.iLike]: partialTitle + "%" } },
-      order: [["card_title", orderDirection]],
-    });
-    return res;
-  } else if (filter === "date") {
-    const res = await posts.findAll({
-      where: { card_title: { [Op.iLike]: partialTitle + "%" } },
-      order: [["createdAt", orderDirection]],
-    });
-    return res;
+  else {
+    const findSubject = await subject.findOne({ where: { subj } })
+    if (findSubject) {
+       return await posts.findAll({
+         where: { card_title: { [Op.iLike]: partialTitle + "%" }, subjectId:findSubject.id }
+       });
+    }
+    
   }
 };
 
@@ -74,5 +81,5 @@ module.exports = {
   deletePostById,
   getPostById,
   modifyPostById,
-  getOrderedPosts,
+  getAllPosts,
 };
