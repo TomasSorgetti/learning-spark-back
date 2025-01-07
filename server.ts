@@ -1,11 +1,11 @@
-import { App } from "./src/app";
+import { App } from "./src/infrastructure/app";
 import { ErrorHandler } from "./src/shared/utils/error-handler";
-const PORT = process.env.PORT || 8000;
+import { serverConfig } from "./src/infrastructure/config";
 
 const app = new App().getApp();
 
 app.use(ErrorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(serverConfig.SERVER_PORT, () => {
+  console.log(`Server running on http://localhost:${serverConfig.SERVER_PORT}`);
 });
