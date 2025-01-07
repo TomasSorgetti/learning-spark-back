@@ -13,7 +13,7 @@ export class UserRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.post("/", (req: Request, res: Response, next: NextFunction) => {
+    this.router.use("/", (req: Request, res: Response, next: NextFunction) => {
       this.userController.createUser(req, res, next);
     });
   }

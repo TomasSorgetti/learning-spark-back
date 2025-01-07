@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { UserService } from "../../services/UserService";
+import { UserService } from "../../../application/services/UserService";
 
 export class UserController {
   private userService: UserService;
@@ -14,7 +14,7 @@ export class UserController {
       const response = await this.userService.createUser({ name, email });
       return res.status(201).json(response);
     } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+      next(error);
     }
   }
 }
