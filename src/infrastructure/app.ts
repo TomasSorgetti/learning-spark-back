@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import { MainRouter } from "./http/routes/main.router";
 import morgan from "morgan";
 import cors from "cors";
+import { redisClient } from "./redis/RedisClient";
 
 export class App {
   private app: Application;

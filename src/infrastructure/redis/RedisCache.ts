@@ -1,4 +1,3 @@
-// src/infrastructure/redis/RedisCache.ts
 import { redisClient } from "./RedisClient";
 
 export class RedisCache {
