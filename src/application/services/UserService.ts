@@ -1,11 +1,11 @@
 import { User } from "../../domain/entities/User";
-import { UserRepository } from "../../infrastructure/database/repositories/UserRepository";
+import { UserRepositoryImpl } from "../../infrastructure/database/repositories/UserRepositoryImpl";
 
 export class UserService {
-  private userRepository: UserRepository;
+  private userRepository: UserRepositoryImpl;
 
   constructor() {
-    this.userRepository = new UserRepository();
+    this.userRepository = new UserRepositoryImpl();
   }
 
   public async createUser(userData: {
@@ -13,10 +13,11 @@ export class UserService {
     email: string;
   }): Promise<any> {
     const user = new User(userData.name, userData.email);
-    return await this.userRepository.save(user);
+    // return await this.userRepository.create(user);
+    return user;
   }
 
   public async getUserByEmail(email: string): Promise<any> {
-    return await this.userRepository.getByEmail(email);
+    return await this.userRepository.findByEmail(email);
   }
 }

@@ -1,5 +1,7 @@
-import { User } from "../entities/User";
+import { IUser } from "../../infrastructure/database/models/UserSchema";
 
 export interface IUserRepository {
-  save(user: User): Promise<void>;
+  findById(id: string): Promise<IUser | null>;
+  findByEmail(email: string): Promise<IUser | null>;
+  create(user: Partial<IUser>): Promise<IUser>;
 }
