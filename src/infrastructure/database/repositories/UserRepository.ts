@@ -8,4 +8,12 @@ export class UserRepository implements IUserRepository {
   async save(user: User): Promise<void> {
     this.users.push(user);
   }
+
+  async getByEmail(email: string): Promise<any> {
+    return {
+      name: "name",
+      email: email,
+      password: "password",
+    };
+  }
 }
