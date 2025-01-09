@@ -19,7 +19,7 @@ export class AuthService {
     email: string;
     password: string;
   }): Promise<any> {
-    return await this.userService.getUserByEmail(userData.email);
+    return await this.userService.createUser(userData);
   }
 
   public async verify(): Promise<any> {}
