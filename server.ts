@@ -1,7 +1,6 @@
 import { App } from "./src/infrastructure/app";
 import { ErrorHandler } from "./src/shared/utils/error-handler";
 import { serverConfig } from "./src/infrastructure/config";
-import { initRedis } from "./src/infrastructure/redis/redisClient";
 import { MongoClient } from "./src/infrastructure/database/mongoClient";
 
 class Server {
@@ -20,14 +19,9 @@ class Server {
     await mongoClient.connect();
   }
 
-  private setupRedis() {
-    initRedis();
-  }
-
   public start() {
     this.setupMiddlewares();
     this.setupMongoDB();
-    // this.setupRedis();
 
     this.app.listen(serverConfig.SERVER_PORT, () => {
       console.log(

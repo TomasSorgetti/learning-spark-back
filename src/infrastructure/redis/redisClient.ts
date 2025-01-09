@@ -1,26 +1,33 @@
-import { createClient, RedisClientType } from "redis";
-import { redisConfig } from "../../infrastructure/config/redis.config";
+import Redis from "ioredis";
 
-let redisClient: RedisClientType | null = null;
+class RedisClient {
+  private client: Redis;
 
-export const connectRedis = (): RedisClientType => {
-  if (redisClient) return redisClient;
+  constructor() {
+    this.client = new Redis({
+      host: process.env.REDIS_HOST || "localhost",
+      port: Number(process.env.REDIS_PORT) || 6379,
+      password: process.env.REDIS_PASSWORD || "",
+      db: 0,
+    });
+  }
 
-  redisClient = createClient({
-    url: `redis://${redisConfig.REDIS_HOST}:${redisConfig.REDIS_PORT}`,
-  });
+  async get<T>(key: string): Promise<T | null> {
+    const result = await this.client.get(key);
+    return result ? JSON.parse(result) : null;
+  }
 
-  redisClient.on("connect", () => {
-    console.log("Conected to Redis");
-  });
+  async set<T>(key: string, value: T, ttl: number = 3600): Promise<void> {
+    await this.client.set(key, JSON.stringify(value), "EX", ttl);
+  }
 
-  redisClient.on("error", (err) => {
-    console.error("Error connecting to Redis:", err);
-  });
+  async del(key: string): Promise<void> {
+    await this.client.del(key);
+  }
 
-  redisClient.connect();
+  async quit(): Promise<void> {
+    await this.client.quit();
+  }
+}
 
-  return redisClient;
-};
-
-export const initRedis = connectRedis;
+export const redisClient = new RedisClient();
