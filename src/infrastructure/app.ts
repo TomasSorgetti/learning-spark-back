@@ -2,7 +2,6 @@ import express, { Application } from "express";
 import { MainRouter } from "./http/routes/main.router";
 import morgan from "morgan";
 import cors from "cors";
-import { redisClient } from "./redis/RedisClient";
 
 export class App {
   private app: Application;
@@ -24,6 +23,12 @@ export class App {
 
   private initializeRoutes() {
     this.app.use("/", this.mainRouter.getRouter());
+
+    this.app.use("/ping", (req: any, res: any) => {
+      return res.status(200).json({
+        message: "PONG",
+      });
+    });
   }
 
   public getApp() {

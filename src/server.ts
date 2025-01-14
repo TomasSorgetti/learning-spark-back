@@ -1,8 +1,8 @@
-import { App } from "./src/infrastructure/app";
-import { ErrorHandler } from "./src/shared/utils/error-handler";
-import { serverConfig } from "./src/infrastructure/config";
-import { MongoClient } from "./src/infrastructure/database/mongoClient";
-import { redisClient } from "./src/infrastructure/redis/RedisClient";
+import { App } from "./infrastructure/app";
+import { ErrorHandler } from "./shared/utils/error-handler";
+import { serverConfig } from "./infrastructure/config";
+import { MongoClient } from "./infrastructure/database/mongoClient";
+import { redisClient } from "./infrastructure/redis/RedisClient";
 
 class Server {
   private app: any;

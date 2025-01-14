@@ -2,6 +2,8 @@ import { Router } from "express";
 import { UserRouter } from "./user.router";
 import { AuthRouter } from "./auth.router";
 import { ProductRouter } from "./product.router";
+import { PostRouter } from "./post.router";
+import { SubjectRouter } from "./subject.router";
 
 export class MainRouter {
   public router: Router;
@@ -15,10 +17,14 @@ export class MainRouter {
     const userRouter = new UserRouter();
     const authRouter = new AuthRouter();
     const productRouter = new ProductRouter();
+    const postRouter = new PostRouter();
+    const subjectRouter = new SubjectRouter();
 
     this.router.use("/users", userRouter.getRouter());
     this.router.use("/auth", authRouter.getRouter());
-    this.router.use("/products", productRouter.getRouter());
+    this.router.use("/product", productRouter.getRouter());
+    this.router.use("/blog", postRouter.getRouter());
+    this.router.use("/subject", subjectRouter.getRouter());
   }
 
   public getRouter() {

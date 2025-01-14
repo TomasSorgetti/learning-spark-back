@@ -55,3 +55,15 @@ export class ValidationError extends AppError {
     );
   }
 }
+
+export class ConflictError extends AppError {
+  constructor(description: string = "Conflict error", errorStack?: string) {
+    super(
+      "CONFLICT_ERROR",
+      STATUS_CODES.BAD_REQUEST,
+      description,
+      true,
+      errorStack
+    );
+  }
+}
