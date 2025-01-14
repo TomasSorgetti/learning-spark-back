@@ -27,7 +27,34 @@ export class AuthController {
         email,
         password,
       });
-      return res.status(201).json(response);
+      return res.status(200).json(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  public async verify(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await this.authService.verify()
+      return res.status(200).json(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  public async profile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await this.authService.profile()
+      return res.status(200).json(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  public async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await this.authService.logout();
+      return res.status(200).json(response);
     } catch (error: any) {
       next(error);
     }

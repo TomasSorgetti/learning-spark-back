@@ -9,7 +9,6 @@ export class PostService {
 
   public async createPost(postData: any): Promise<any> {
     await RedisCache.delete("posts");
-    await RedisCache.delete(`post-${postData._id}`);
     return await this.postRepository.create(postData);
   }
   
