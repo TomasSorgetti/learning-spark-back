@@ -5,5 +5,6 @@ export interface IRoleRepository {
   update(role: Partial<IRole>): Promise<IRole | null>;
   delete(roleId: string): Promise<IRole | null>;
   getById(roleId: string): Promise<IRole | null>;
+  getByName(name: string): Promise<IRole | null>;
   getAll(): Promise<IRole[]>;
 }

@@ -37,6 +37,9 @@ export class RoleRepositoryImpl implements IRoleRepository {
   async getById(roleId: string): Promise<IRole | null> {
     return RoleModel.findById(roleId).exec();
   }
+  async getByName(roleName: string): Promise<IRole | null> {
+    return RoleModel.findOne({ name: roleName }).exec();
+  }
 
   async getAll(): Promise<IRole[]> {
     return RoleModel.find().exec();

@@ -38,6 +38,9 @@ export class RoleService {
 
     return role;
   }
+  public async getRoleByName(name: string): Promise<any> {
+    return await this.roleRepository.getByName(name);
+  }
 
   public async getAllRoles(): Promise<any> {
     const cacheKey = `roles`;

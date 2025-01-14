@@ -4,6 +4,8 @@ export const STATUS_CODES = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
+  CONFLICT_ERROR: 409,
+  GONE_ERROR: 410,
   INTERNAL_ERROR: 500,
 };
 
@@ -43,6 +45,11 @@ export class BadRequestError extends AppError {
     super("BAD_REQUEST", STATUS_CODES.BAD_REQUEST, description);
   }
 }
+export class GoneError extends AppError {
+  constructor(description: string = "This resource is no longer available") {
+    super("GONE_ERROR", STATUS_CODES.GONE_ERROR, description);
+  }
+}
 
 export class ValidationError extends AppError {
   constructor(description: string = "Validation error", errorStack?: string) {
@@ -60,7 +67,7 @@ export class ConflictError extends AppError {
   constructor(description: string = "Conflict error", errorStack?: string) {
     super(
       "CONFLICT_ERROR",
-      STATUS_CODES.BAD_REQUEST,
+      STATUS_CODES.CONFLICT_ERROR,
       description,
       true,
       errorStack

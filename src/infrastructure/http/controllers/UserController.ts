@@ -10,13 +10,7 @@ export class UserController {
 
   public async createUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, email, password } = req.body;
-      const response = await this.userService.createUser({
-        name,
-        email,
-        password,
-      });
-      return res.status(201).json(response);
+      return res.status(201).json();
     } catch (error: any) {
       next(error);
     }
