@@ -18,21 +18,21 @@ export class PostRouter {
     });
 
     this.router.patch(
-      "/:postId",
+      "/:_id",
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.updatePost(req, res, next);
       }
     );
 
     this.router.delete(
-      "/:postId",
+      "/:_id",
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.deletePost(req, res, next);
       }
     );
 
     this.router.get(
-      "/:postId",
+      "/:_id",
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.getPost(req, res, next);
       }

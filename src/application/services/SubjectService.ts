@@ -16,21 +16,21 @@ export class SubjectService {
     await RedisCache.delete(`subject-${subjectData._id}`);
     return await this.subjectRepository.update(subjectData);
   }
-  public async deleteSubject(subjectId: string): Promise<any> {
+  public async deleteSubject(_id: string): Promise<any> {
     await RedisCache.delete("subjects");
-    await RedisCache.delete(`subject-${subjectId}`);
-    return await this.subjectRepository.delete(subjectId);
+    await RedisCache.delete(`subject-${_id}`);
+    return await this.subjectRepository.delete(_id);
   }
 
-  public async getSubject(subjectId: string): Promise<any> {
-    const cacheKey = `subject-${subjectId}`;
+  public async getSubject(_id: string): Promise<any> {
+    const cacheKey = `subject-${_id}`;
     const cachedSubject = await RedisCache.get(cacheKey);
 
     if (cachedSubject && typeof cachedSubject === "string") {
       return JSON.parse(cachedSubject);
     }
 
-    const subject = await this.subjectRepository.getById(subjectId);
+    const subject = await this.subjectRepository.getById(_id);
 
     await RedisCache.set(cacheKey, JSON.stringify(subject), 3600);
 

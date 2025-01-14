@@ -18,21 +18,21 @@ export class SubjectRouter {
     });
 
     this.router.patch(
-      "/:subjectId",
+      "/:_id",
       (req: Request, res: Response, next: NextFunction) => {
         this.subjectController.updateSubject(req, res, next);
       }
     );
 
     this.router.delete(
-      "/:subjectId",
+      "/:_id",
       (req: Request, res: Response, next: NextFunction) => {
         this.subjectController.deleteSubject(req, res, next);
       }
     );
 
     this.router.get(
-      "/:subjectId",
+      "/:_id",
       (req: Request, res: Response, next: NextFunction) => {
         this.subjectController.getSubject(req, res, next);
       }

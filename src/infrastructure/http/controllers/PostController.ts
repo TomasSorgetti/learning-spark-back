@@ -10,12 +10,13 @@ export class PostController {
 
   public async createPost(req: Request, res: Response, next: NextFunction) {
     try {
-      const { title, content, author, url, image, subjectId } = req.body;
+      const { title, content, author, tags, url, image, subjectId } = req.body;
 
       const response = await this.postService.createPost({
         title,
         content,
         author,
+        tags,
         url,
         image,
         subjectId,
@@ -28,16 +29,17 @@ export class PostController {
 
   public async updatePost(req: Request, res: Response, next: NextFunction) {
     try {
-      const { title, content, author, url, image, subjectId } = req.body;
-      const { postId } = req.params;
+      const { title, content, author, tags, url, image, subjectId } = req.body;
+      const { _id } = req.params;
 
       const response = await this.postService.updatePost({
         title,
         content,
         author,
+        tags,
         url,
         image,
-        postId,
+        _id,
         subjectId,
       });
       return res.status(200).json(response);
@@ -48,9 +50,9 @@ export class PostController {
 
   public async deletePost(req: Request, res: Response, next: NextFunction) {
     try {
-      const { postId } = req.params;
+      const { _id } = req.params;
 
-      const response = await this.postService.updatePost(postId);
+      const response = await this.postService.updatePost(_id);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);
@@ -59,9 +61,9 @@ export class PostController {
 
   public async getPost(req: Request, res: Response, next: NextFunction) {
     try {
-      const { postId } = req.params;
+      const { _id } = req.params;
 
-      const response = await this.postService.getPost(postId);
+      const response = await this.postService.getPost(_id);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);

@@ -22,11 +22,11 @@ export class SubjectController {
   public async updateSubject(req: Request, res: Response, next: NextFunction) {
     try {
       const { name } = req.body;
-      const { subjectId } = req.params;
+      const { _id } = req.params;
 
       const response = await this.subjectService.updateSubject({
         name,
-        _id: subjectId,
+        _id,
       });
       return res.status(200).json(response);
     } catch (error: any) {
@@ -36,9 +36,9 @@ export class SubjectController {
 
   public async deleteSubject(req: Request, res: Response, next: NextFunction) {
     try {
-      const { subjectId } = req.params;
+      const { _id } = req.params;
 
-      const response = await this.subjectService.updateSubject(subjectId);
+      const response = await this.subjectService.updateSubject(_id);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);
@@ -47,9 +47,9 @@ export class SubjectController {
 
   public async getSubject(req: Request, res: Response, next: NextFunction) {
     try {
-      const { subjectId } = req.params;
+      const { _id } = req.params;
 
-      const response = await this.subjectService.getSubject(subjectId);
+      const response = await this.subjectService.getSubject(_id);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);
