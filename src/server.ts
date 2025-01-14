@@ -3,6 +3,7 @@ import { ErrorHandler } from "./shared/utils/error-handler";
 import { serverConfig } from "./infrastructure/config";
 import { MongoClient } from "./infrastructure/database/mongoClient";
 import { redisClient } from "./infrastructure/redis/RedisClient";
+import { RoleInitializer } from "./application/services/RoleInitializer";
 
 class Server {
   private app: any;
@@ -48,6 +49,8 @@ class Server {
     this.setupMiddlewares();
     await this.setupMongoDB();
     await this.setupRedis();
+
+    await RoleInitializer.initializeRoles();
 
     this.app.listen(serverConfig.SERVER_PORT, () => {
       console.log(
