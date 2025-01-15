@@ -7,14 +7,14 @@ import {
   GoneError,
 } from "../../shared/utils/app-errors";
 import { SecurityService } from "./SecurityService";
+import { CreateUserUseCase } from "../use-cases/CreateUserUseCase";
 
 export class UserService {
   private userRepository: UserRepositoryImpl;
-  private securityService: SecurityService;
-
+  private createUserUseCase: CreateUserUseCase;
   constructor() {
     this.userRepository = new UserRepositoryImpl();
-    this.securityService = new SecurityService();
+    this.createUserUseCase = new CreateUserUseCase();
   }
 
   public async createUser(userData: {
@@ -23,28 +23,7 @@ export class UserService {
     password: string;
     roles: mongoose.Types.ObjectId[];
   }): Promise<any> {
-    // Validar que el email no exista
-    const existingUser = await this.userRepository.findByEmail(userData.email);
-    // Si esta eliminado
-    if (existingUser && existingUser.deleted) {
-      throw new GoneError("User deleted");
-    } else if (existingUser) {
-      // Si existe, retornar error
-      throw new ConflictError("User already exists");
-    }
-    // Si no existe, Encriptar password
-    const hashedPassword = await this.securityService.hashPassword(
-      userData.password
-    );
-    // Guardar user
-    const user = new User(
-      userData.name,
-      userData.email,
-      hashedPassword,
-      userData.roles
-    );
-    // Retornar user
-    return await this.userRepository.create(user.toPrimitives());
+    return this.createUserUseCase.execute(userData);
   }
 
   public async getUserByEmail(email: string): Promise<any> {

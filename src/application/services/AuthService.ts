@@ -32,7 +32,7 @@ export class AuthService {
     if (!user) {
       throw new BadRequestError("Error creating user");
     }
-    // send email verification
+    // todo => send email verification
     return user;
   }
 
