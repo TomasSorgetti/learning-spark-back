@@ -2,13 +2,13 @@ import { RoleModel } from "../../infrastructure/database/models/RoleSchema";
 
 export class RoleInitializer {
   static async initializeRoles() {
-    const defaultRoles = [{ name: "admin" }, { name: "user" }];
+    const defaultRoles = ["admin", "user"];
 
     for (const role of defaultRoles) {
-      const existingRole = await RoleModel.findOne({ name: role.name });
+      const existingRole = await RoleModel.findOne({ name: role });
       if (!existingRole) {
-        await RoleModel.create(role);
-        console.log(`Role "${role.name}" created`);
+        await RoleModel.create({ name: role });
+        console.log(`Role "${role}" created`);
       }
     }
   }

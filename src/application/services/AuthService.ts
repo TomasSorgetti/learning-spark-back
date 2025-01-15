@@ -3,6 +3,7 @@ import { RoleService } from "./RoleService";
 import { serverConfig } from "../../infrastructure/config";
 import mongoose from "mongoose";
 import { APIError, BadRequestError } from "../../shared/utils/app-errors";
+import { IUser } from "../../infrastructure/database/models/UserSchema";
 
 export class AuthService {
   private userService: UserService;
@@ -24,7 +25,7 @@ export class AuthService {
     name: string;
     email: string;
     password: string;
-  }): Promise<any> {
+  }): Promise<IUser> {
     const roleId = await this.assignDefaultRole(userData.email);
     const userDataWithRole = { ...userData, roles: [roleId] };
 
@@ -32,8 +33,19 @@ export class AuthService {
     if (!user) {
       throw new BadRequestError("Error creating user");
     }
-    // todo => send email verification
+    // todo => send email verification code
     return user;
+  }
+
+  private async assignDefaultRole(
+    email: string
+  ): Promise<mongoose.Types.ObjectId> {
+    const roleName = email === serverConfig.OWNER_EMAIL ? "admin" : "user";
+    const role = await this.roleService.getRole(roleName);
+    if (!role) {
+      throw new APIError(`Role "${roleName}" not found`);
+    }
+    return role._id;
   }
 
   public async verify(): Promise<any> {}
@@ -41,15 +53,4 @@ export class AuthService {
   public async profile(): Promise<any> {}
 
   public async logout(): Promise<any> {}
-
-  private async assignDefaultRole(
-    email: string
-  ): Promise<mongoose.Types.ObjectId> {
-    const roleName = email === serverConfig.ADMIN_EMAIL ? "admin" : "user";
-    const role = await this.roleService.getRole(roleName);
-    if (!role) {
-      throw new APIError(`Role "${roleName}" not found`);
-    }
-    return role._id;
-  }
 }
