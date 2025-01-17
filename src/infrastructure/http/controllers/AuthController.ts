@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../../application/services/AuthService";
+import { validateUserData } from "../../../shared/utils/validators/userValidator";
 
 export class AuthController {
   private authService: AuthService;
@@ -22,6 +23,9 @@ export class AuthController {
   public async register(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, email, password } = req.body;
+
+      validateUserData({ name, email, password });
+
       const response = await this.authService.register({
         name,
         email,
@@ -35,7 +39,7 @@ export class AuthController {
 
   public async verify(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await this.authService.verify()
+      const response = await this.authService.verify();
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);
@@ -44,7 +48,7 @@ export class AuthController {
 
   public async profile(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await this.authService.profile()
+      const response = await this.authService.profile();
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);

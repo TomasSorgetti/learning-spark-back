@@ -1,25 +1,23 @@
-import { UserService } from "./UserService";
 import { RoleService } from "./RoleService";
 import { serverConfig } from "../../infrastructure/config";
 import mongoose from "mongoose";
 import { APIError, BadRequestError } from "../../shared/utils/app-errors";
 import { IUser } from "../../infrastructure/database/models/UserSchema";
+import { RegisterUserUseCase } from "../use-cases/RegisterUserUseCase";
 
 export class AuthService {
-  private userService: UserService;
   private roleService: RoleService;
+  private registerUserUseCase: RegisterUserUseCase;
 
   constructor() {
-    this.userService = new UserService();
     this.roleService = new RoleService();
+    this.registerUserUseCase = new RegisterUserUseCase();
   }
 
   public async login(userData: {
     email: string;
     password: string;
-  }): Promise<any> {
-    return await this.userService.getUserByEmail(userData.email);
-  }
+  }): Promise<any> {}
 
   public async register(userData: {
     name: string;
@@ -29,11 +27,10 @@ export class AuthService {
     const roleId = await this.assignDefaultRole(userData.email);
     const userDataWithRole = { ...userData, roles: [roleId] };
 
-    const user = await this.userService.createUser(userDataWithRole);
+    const user = await this.registerUserUseCase.execute(userDataWithRole);
     if (!user) {
       throw new BadRequestError("Error creating user");
     }
-    // todo => send email verification code
     return user;
   }
 

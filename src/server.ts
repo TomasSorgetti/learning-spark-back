@@ -26,20 +26,20 @@ class Server {
       redisClient
         .ping()
         .then(() => {
-          console.log("Conexión a Redis exitosa");
+          console.log("Redis connection successful");
           resolve();
         })
         .catch((err) => {
-          console.error("Error al conectar a Redis:", err);
+          console.error("Error connecting to Redis:", err);
           reject(err);
         });
 
       redisClient.on("connect", () => {
-        console.log("Conectado a Redis");
+        console.log("Connected to Redis");
       });
 
       redisClient.on("error", (err) => {
-        console.error("Error de Redis:", err);
+        console.error("Error connecting to Redis:", err);
         reject(err);
       });
     });

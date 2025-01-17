@@ -1,20 +1,16 @@
 import mongoose from "mongoose";
 import { User } from "../../domain/entities/User";
 import { UserRepositoryImpl } from "../../infrastructure/database/repositories/UserRepositoryImpl";
-import {
-  BadRequestError,
-  ConflictError,
-  GoneError,
-} from "../../shared/utils/app-errors";
+import { ConflictError, GoneError } from "../../shared/utils/app-errors";
+import { IUser } from "../../infrastructure/database/models/UserSchema";
 import { SecurityService } from "./SecurityService";
-import { CreateUserUseCase } from "../use-cases/CreateUserUseCase";
 
 export class UserService {
+  private securityService: SecurityService;
   private userRepository: UserRepositoryImpl;
-  private createUserUseCase: CreateUserUseCase;
   constructor() {
+    this.securityService = new SecurityService();
     this.userRepository = new UserRepositoryImpl();
-    this.createUserUseCase = new CreateUserUseCase();
   }
 
   public async createUser(userData: {
@@ -22,8 +18,28 @@ export class UserService {
     email: string;
     password: string;
     roles: mongoose.Types.ObjectId[];
-  }): Promise<any> {
-    return this.createUserUseCase.execute(userData);
+  }): Promise<IUser> {
+    const existingUser = await this.userRepository.findByEmail(userData.email);
+
+    if (existingUser) {
+      if (existingUser.deleted) {
+        throw new GoneError("User deleted");
+      }
+      throw new ConflictError("User already exists");
+    }
+
+    const hashedPassword = await this.securityService.hashPassword(
+      userData.password
+    );
+
+    const user = new User(
+      userData.name,
+      userData.email,
+      hashedPassword,
+      userData.roles
+    );
+
+    return await this.userRepository.create(user.toPrimitives());
   }
 
   public async getUserByEmail(email: string): Promise<any> {

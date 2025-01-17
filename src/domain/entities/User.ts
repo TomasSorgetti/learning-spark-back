@@ -24,10 +24,22 @@ export class User {
   }
 
   private validate() {
-    if (!this.name || !this.email || !this.password) {
-      throw new Error("All fields are required");
+    if (!this.name || this.name.trim().length === 0) {
+      throw new Error("Name is required");
     }
-    // Validations
+
+    //todo => use regex
+    if (!this.email || !this.email.includes("@")) {
+      throw new Error("A valid email is required");
+    }
+
+    if (!this.password || this.password.length < 8) {
+      throw new Error("Password must be at least 8 characters long");
+    }
+
+    if (!this.roles || this.roles.length === 0) {
+      throw new Error("At least one role is required");
+    }
   }
 
   public getName(): string {
