@@ -3,7 +3,8 @@ import { User } from "../../domain/entities/User";
 import { UserRepositoryImpl } from "../../infrastructure/database/repositories/UserRepositoryImpl";
 import { ConflictError, GoneError } from "../../shared/utils/app-errors";
 import { IUser } from "../../infrastructure/database/models/UserSchema";
-import { SecurityService } from "./SecurityService";
+import { SecurityService } from "../../infrastructure/services/SecurityService";
+import { IUserData } from "../interfaces/IUserService";
 
 export class UserService {
   private securityService: SecurityService;
@@ -13,12 +14,10 @@ export class UserService {
     this.userRepository = new UserRepositoryImpl();
   }
 
-  public async createUser(userData: {
-    name: string;
-    email: string;
-    password: string;
-    roles: mongoose.Types.ObjectId[];
-  }): Promise<IUser> {
+  public async createUser(
+    userData: IUserData,
+    transaction?: mongoose.ClientSession
+  ): Promise<IUser> {
     const existingUser = await this.userRepository.findByEmail(userData.email);
 
     if (existingUser) {
@@ -39,10 +38,16 @@ export class UserService {
       userData.roles
     );
 
-    return await this.userRepository.create(user.toPrimitives());
+    return await this.userRepository.create(user.toPrimitives(), transaction);
   }
 
   public async getUserByEmail(email: string): Promise<any> {
     return await this.userRepository.findByEmail(email);
+  }
+
+  public async startTransaction(): Promise<mongoose.ClientSession> {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    return session;
   }
 }

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { APIError, BadRequestError } from "../../shared/utils/app-errors";
 import { IUser } from "../../infrastructure/database/models/UserSchema";
 import { RegisterUserUseCase } from "../use-cases/RegisterUserUseCase";
+import { ILoginUser, IRegisterUser } from "../interfaces/IAuthService";
 
 export class AuthService {
   private roleService: RoleService;
@@ -14,16 +15,9 @@ export class AuthService {
     this.registerUserUseCase = new RegisterUserUseCase();
   }
 
-  public async login(userData: {
-    email: string;
-    password: string;
-  }): Promise<any> {}
+  public async login(userData: ILoginUser): Promise<any> {}
 
-  public async register(userData: {
-    name: string;
-    email: string;
-    password: string;
-  }): Promise<IUser> {
+  public async register(userData: IRegisterUser): Promise<IUser> {
     const roleId = await this.assignDefaultRole(userData.email);
     const userDataWithRole = { ...userData, roles: [roleId] };
 

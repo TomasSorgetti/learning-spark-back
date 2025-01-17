@@ -1,5 +1,6 @@
 import nodemailer, { Transporter } from "nodemailer";
-import { emailConfig } from "../../infrastructure/config/email.config";
+import { emailConfig } from "../config/email.config";
+import { UnavailableError } from "../../shared/utils/app-errors";
 
 export class EmailService {
   private transporter: Transporter;
@@ -28,10 +29,9 @@ export class EmailService {
 
     try {
       await this.transporter.sendMail(mailOptions);
-      console.log("Email sent successfully");
     } catch (error: any) {
       console.error("Error sending email", error);
-      throw new Error("Error sending email");
+      throw new UnavailableError("Error sending email");
     }
   }
 }

@@ -3,7 +3,7 @@ import { ErrorHandler } from "./shared/utils/error-handler";
 import { serverConfig } from "./infrastructure/config";
 import { MongoClient } from "./infrastructure/database/mongoClient";
 import { redisClient } from "./infrastructure/redis/RedisClient";
-import { RoleInitializer } from "./application/services/RoleInitializer";
+import { RoleInitializer } from "./infrastructure/services/RoleInitializer";
 
 class Server {
   private app: any;

@@ -1,5 +1,6 @@
 import { PostRepositoryImpl } from "../../infrastructure/database/repositories/PostRespositoryImpl";
 import { RedisCache } from "../../infrastructure/redis/RedisCache";
+import { IPost } from "../interfaces/IPostService";
 
 export class PostService {
   private postRepository: PostRepositoryImpl;
@@ -7,11 +8,11 @@ export class PostService {
     this.postRepository = new PostRepositoryImpl();
   }
 
-  public async createPost(postData: any): Promise<any> {
+  public async createPost(postData: IPost): Promise<any> {
     await RedisCache.delete("posts");
     return await this.postRepository.create(postData);
   }
-  
+
   public async updatePost(postData: any): Promise<any> {
     await RedisCache.delete("posts");
     await RedisCache.delete(`post-${postData._id}`);

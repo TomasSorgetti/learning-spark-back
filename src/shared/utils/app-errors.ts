@@ -7,6 +7,7 @@ export const STATUS_CODES = {
   CONFLICT_ERROR: 409,
   GONE_ERROR: 410,
   INTERNAL_ERROR: 500,
+  SERVICE_UNAVAILABLE: 503,
 };
 
 export class AppError extends Error {
@@ -68,6 +69,21 @@ export class ConflictError extends AppError {
     super(
       "CONFLICT_ERROR",
       STATUS_CODES.CONFLICT_ERROR,
+      description,
+      true,
+      errorStack
+    );
+  }
+}
+
+export class UnavailableError extends AppError {
+  constructor(
+    description: string = "Service unavailable",
+    errorStack?: string
+  ) {
+    super(
+      "SERVICE_UNAVAILABLE",
+      STATUS_CODES.SERVICE_UNAVAILABLE,
       description,
       true,
       errorStack

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../../application/services/AuthService";
-import { validateUserData } from "../../../shared/utils/validators/userValidator";
+import { validateUserData } from "../../../shared/validators/userValidator";
 
 export class AuthController {
   private authService: AuthService;
