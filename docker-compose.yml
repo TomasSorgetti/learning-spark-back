@@ -1,38 +1,36 @@
-version: "3.8"
+version: '3.9'
 
 services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+    container_name: node-app
     ports:
-      - "8001:8000"
+      - "${SERVER_PORT}:8000"
     volumes:
       - .:/app
       - /app/node_modules
-    env_file:
-      - .env
     depends_on:
-      - mongodb
+      - mongo
       - redis
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
 
-  mongodb:
-    image: mongo:6
+  mongo:
+    image: mongo:5.0
     container_name: mongodb
     ports:
-      - "27018:27017"
+      - "27017:27017"
     volumes:
-      - mongo-data:/data/db
-    environment:
-      MONGO_URI: "mongodb://root:example@mongodb:27017/node-clean"
-    command: ["mongod", "--quiet"]
+      - mongodb-data:/data/db
 
   redis:
-    image: redis:7
+    image: redis:7.0
     container_name: redis
     ports:
-      - "6380:6379"
-    command: ["redis-server", "--appendonly", "yes"]
+      - "6379:6379"
 
 volumes:
-  mongo-data:
+  mongodb-data:
