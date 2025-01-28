@@ -5,16 +5,17 @@ import { EmailService } from "../../infrastructure/services/EmailService";
 import { IUser } from "../../infrastructure/database/models/UserSchema";
 import { UnavailableError } from "../../shared/utils/app-errors";
 import { IUserData } from "../interfaces/IUserService";
+import { VerificationCodeService } from "../services/VerificationCodeService";
 
 export class RegisterUserUseCase {
   private userService: UserService;
-  private securityService: SecurityService;
   private emailService: EmailService;
+  private verificationCodeService: VerificationCodeService;
 
   constructor() {
     this.userService = new UserService();
-    this.securityService = new SecurityService();
     this.emailService = new EmailService();
+    this.verificationCodeService = new VerificationCodeService();
   }
 
   async execute(userData: IUserData): Promise<IUser> {
@@ -30,8 +31,14 @@ export class RegisterUserUseCase {
         },
         transaction
       );
-
-      const verificationCode = this.securityService.generateVerificationCode(6);
+      if (!user) {
+        throw new UnavailableError("Error creating user");
+      }
+      const verificationCode =
+        this.verificationCodeService.createVerificationCode(
+          user._id as string,
+          6
+        );
 
       await this.emailService.sendEmail(
         userData.email,

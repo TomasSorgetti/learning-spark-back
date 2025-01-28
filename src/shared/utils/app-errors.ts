@@ -46,6 +46,13 @@ export class BadRequestError extends AppError {
     super("BAD_REQUEST", STATUS_CODES.BAD_REQUEST, description);
   }
 }
+
+export class NotFoundError extends AppError {
+  constructor(description: string = "Not found") {
+    super("NOT_FOUND", STATUS_CODES.NOT_FOUND, description);
+  }
+}
+
 export class GoneError extends AppError {
   constructor(description: string = "This resource is no longer available") {
     super("GONE_ERROR", STATUS_CODES.GONE_ERROR, description);
@@ -84,6 +91,18 @@ export class UnavailableError extends AppError {
     super(
       "SERVICE_UNAVAILABLE",
       STATUS_CODES.SERVICE_UNAVAILABLE,
+      description,
+      true,
+      errorStack
+    );
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor(description: string = "Unauthorized", errorStack?: string) {
+    super(
+      "UNAUTHORIZED",
+      STATUS_CODES.UNAUTHORIZED,
       description,
       true,
       errorStack

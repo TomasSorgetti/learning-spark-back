@@ -10,4 +10,5 @@ export interface IRegisterUser extends IUserBase {
 
 export interface ILoginUser extends IUserBase {
   password: string;
+  rememberme: boolean;
 }

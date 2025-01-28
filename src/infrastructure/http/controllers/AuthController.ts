@@ -11,10 +11,15 @@ export class AuthController {
 
   public async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body;
+      const { email, password, rememberme } = req.body;
 
-      const response = await this.authService.login({ email, password });
-      return res.status(201).json(response);
+      const { user, accessToken, refreshToken } = await this.authService.login({
+        email,
+        password,
+        rememberme,
+      });
+      // create httpOnly cookies for access token & refresh token
+      return res.status(201).json(user);
     } catch (error: any) {
       next(error);
     }
