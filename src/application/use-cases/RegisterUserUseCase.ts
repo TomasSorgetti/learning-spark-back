@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-import { SecurityService } from "../../infrastructure/services/SecurityService";
 import { UserService } from "../services/UserService";
 import { EmailService } from "../../infrastructure/services/EmailService";
 import { IUser } from "../../infrastructure/database/models/UserSchema";
@@ -35,7 +33,7 @@ export class RegisterUserUseCase {
         throw new UnavailableError("Error creating user");
       }
       const verificationCode =
-        this.verificationCodeService.createVerificationCode(
+        await this.verificationCodeService.createVerificationCode(
           user._id as string,
           6
         );
@@ -51,8 +49,11 @@ export class RegisterUserUseCase {
       return user;
     } catch (error) {
       await transaction.abortTransaction();
+      throw error instanceof UnavailableError
+        ? error
+        : new UnavailableError("Unexpected error during user registration");
+    } finally {
       transaction.endSession();
-      throw new UnavailableError("Error creating user or sending email");
     }
   }
 }

@@ -7,16 +7,19 @@ import {
   UnauthorizedError,
 } from "../../shared/utils/app-errors";
 import { TokenService } from "../../infrastructure/services/TokenService";
+import { SessionService } from "../services/SessionService";
 
 export class LoginUseCase {
   private userService: UserService;
   private securityService: SecurityService;
   private tokenService: TokenService;
+  private sessionService: SessionService;
 
   constructor() {
     this.userService = new UserService();
     this.securityService = new SecurityService();
     this.tokenService = new TokenService();
+    this.sessionService = new SessionService();
   }
 
   public async execute(userData: ILoginUser): Promise<any> {
@@ -37,16 +40,22 @@ export class LoginUseCase {
     }
 
     // create session
-
+    const session = await this.sessionService.createSession({
+      userId: existingUser._id,
+    });
+    if (!session) {
+      throw new UnauthorizedError("Error creating session");
+    }
+    
     // create access & refresh token
     const accessToken = this.tokenService.generateAccessToken({
-      // id: existingUser.getId(),
+      // sub: existingUser.getId(),
       // email: existingUser.getEmail(),
       // roles: existingUser.getRoles(),
     });
     const refreshToken = this.tokenService.generateRefreshToken(
       {
-        // id: existingUser.getId(),
+        // sub: existingUser.getId(),
         // email: existingUser.getEmail(),
         // roles: existingUser.getRoles(),
       },
