@@ -1,4 +1,4 @@
-import { App } from "./infrastructure/app";
+import { App } from "./interfaces/app";
 import { ErrorHandler } from "./shared/utils/error-handler";
 import { serverConfig } from "./infrastructure/config";
 import { MongoClient } from "./infrastructure/database/mongoClient";
