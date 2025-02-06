@@ -24,7 +24,7 @@ export class AuthController {
 
       validateUserData({ name, email, password });
 
-      const response = await this.registerUserUseCase.execute({
+      const response = await this.registerUserUseCase.execute(res, {
         name,
         email,
         password,

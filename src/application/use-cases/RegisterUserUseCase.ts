@@ -7,21 +7,25 @@ import mongoose from "mongoose";
 import { serverConfig } from "../../infrastructure/config";
 import { RoleService } from "../services/RoleService";
 import { IRegisterUser } from "../interfaces/IAuthService";
+import { CookieService } from "../../infrastructure/services/CookieService";
+import { Response } from "express";
 
 export class RegisterUserUseCase {
   private roleService: RoleService;
   private userService: UserService;
   private emailService: EmailService;
   private verificationCodeService: VerificationCodeService;
+  private cookieService: CookieService;
 
   constructor() {
     this.roleService = new RoleService();
     this.userService = new UserService();
     this.emailService = new EmailService();
     this.verificationCodeService = new VerificationCodeService();
+    this.cookieService = new CookieService();
   }
 
-  async execute(userData: IRegisterUser): Promise<IUser> {
+  async execute(res: Response, userData: IRegisterUser): Promise<IUser> {
     const roleId = await this.assignDefaultRole(userData.email);
     const userDataWithRole = { ...userData, roles: [roleId] };
 
@@ -47,6 +51,22 @@ export class RegisterUserUseCase {
         userDataWithRole.email,
         "Verification code",
         `Your verification code is: ${verificationCode.code}. The code will expire in 10 minutes. RUUUNN!`
+      );
+
+      this.cookieService.createCookie(
+        res,
+        "emailVerification",
+        JSON.stringify({
+          userId: user._id,
+          codeExpiresAt: verificationCode.expiresAt,
+        }),
+        {
+          httpOnly: false,
+          secure: true,
+          maxAge: 20 * 60 * 1000, // 20 minutes
+          sameSite: "Strict",
+          path: "/",
+        }
       );
 
       return user;
