@@ -3,17 +3,22 @@ import {
   VerificationCodeModel,
 } from "../models/VerificationCodeSchema";
 import { IVerificationCodeRepository } from "../../../domain/repositories/IVerificationCodeRepository";
+import mongoose from "mongoose";
 
 export class VerificationCodeRepositoryImpl
   implements IVerificationCodeRepository
 {
-  async create(data: Partial<IVerificationCode>): Promise<IVerificationCode> {
+  async create(
+    data: Partial<IVerificationCode>,
+    session: mongoose.ClientSession
+  ): Promise<IVerificationCode> {
     const newCode = new VerificationCodeModel({
       userId: data.userId,
       code: data.code,
       expiresAt: data.expiresAt,
     });
-    return await newCode.save();
+
+    return await newCode.save({ session });
   }
 
   async findByUserIdAndCode(

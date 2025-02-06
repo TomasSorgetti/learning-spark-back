@@ -5,11 +5,9 @@ import cors from "cors";
 
 export class App {
   private app: Application;
-  private mainRouter: MainRouter;
 
   constructor() {
     this.app = express();
-    this.mainRouter = new MainRouter();
     this.initializeMiddlewares();
     this.initializeRoutes();
   }
@@ -22,7 +20,9 @@ export class App {
   }
 
   private initializeRoutes() {
-    this.app.use("/", this.mainRouter.getRouter());
+    const mainRouter = new MainRouter();
+
+    this.app.use("/v1", mainRouter.getRouter());
 
     this.app.use("/ping", (req: any, res: any) => {
       return res.status(200).json({

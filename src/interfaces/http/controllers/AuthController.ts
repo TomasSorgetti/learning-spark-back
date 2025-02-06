@@ -1,28 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../../../application/services/AuthService";
 import { validateUserData } from "../../../shared/validators/userValidator";
+import { LoginUseCase } from "../../../application/use-cases/loginUseCase";
+import { RegisterUserUseCase } from "../../../application/use-cases/RegisterUserUseCase";
 
 export class AuthController {
-  private authService: AuthService;
+  private loginUseCase: LoginUseCase;
+  private registerUserUseCase: RegisterUserUseCase;
 
   constructor() {
-    this.authService = new AuthService();
-  }
-
-  public async login(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { email, password, rememberme } = req.body;
-
-      const { user, accessToken, refreshToken } = await this.authService.login({
-        email,
-        password,
-        rememberme,
-      });
-      // create httpOnly cookies for access token & refresh token
-      return res.status(201).json(user);
-    } catch (error: any) {
-      next(error);
-    }
+    this.loginUseCase = new LoginUseCase();
+    this.registerUserUseCase = new RegisterUserUseCase();
   }
 
   public async register(req: Request, res: Response, next: NextFunction) {
@@ -31,7 +18,7 @@ export class AuthController {
 
       validateUserData({ name, email, password });
 
-      const response = await this.authService.register({
+      const response = await this.registerUserUseCase.execute({
         name,
         email,
         password,
@@ -42,10 +29,24 @@ export class AuthController {
     }
   }
 
+  public async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, password, rememberme } = req.body;
+
+      const user = await this.loginUseCase.execute(res, {
+        email,
+        password,
+        rememberme,
+      });
+      return res.status(201).json(user);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   public async verify(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await this.authService.verify();
-      return res.status(200).json(response);
+      return res.status(200);
     } catch (error: any) {
       next(error);
     }
@@ -53,8 +54,7 @@ export class AuthController {
 
   public async profile(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await this.authService.profile();
-      return res.status(200).json(response);
+      return res.status(200);
     } catch (error: any) {
       next(error);
     }
@@ -62,8 +62,7 @@ export class AuthController {
 
   public async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await this.authService.logout();
-      return res.status(200).json(response);
+      return res.status(200);
     } catch (error: any) {
       next(error);
     }

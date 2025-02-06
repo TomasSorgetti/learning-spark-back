@@ -30,7 +30,6 @@ export class EmailService {
     try {
       await this.transporter.sendMail(mailOptions);
     } catch (error: any) {
-      console.error("Error sending email", error);
       throw new UnavailableError("Error sending email");
     }
   }

@@ -13,12 +13,10 @@ export class UserRepositoryImpl implements IUserRepository {
 
   async create(
     user: Partial<IUser>,
-    transaction?: mongoose.ClientSession
+    session: mongoose.ClientSession
   ): Promise<IUser> {
     const newUser = new UserModel(user);
-    if (transaction) {
-      return await newUser.save({ session: transaction });
-    }
-    return await newUser.save();
+
+    return await newUser.save({ session });
   }
 }

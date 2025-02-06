@@ -1,59 +1,86 @@
 import { UserService } from "../services/UserService";
 import { EmailService } from "../../infrastructure/services/EmailService";
 import { IUser } from "../../infrastructure/database/models/UserSchema";
-import { UnavailableError } from "../../shared/utils/app-errors";
-import { IUserData } from "../interfaces/IUserService";
+import { APIError, UnavailableError } from "../../shared/utils/app-errors";
 import { VerificationCodeService } from "../services/VerificationCodeService";
+import mongoose from "mongoose";
+import { serverConfig } from "../../infrastructure/config";
+import { RoleService } from "../services/RoleService";
+import { IRegisterUser } from "../interfaces/IAuthService";
 
 export class RegisterUserUseCase {
+  private roleService: RoleService;
   private userService: UserService;
   private emailService: EmailService;
   private verificationCodeService: VerificationCodeService;
 
   constructor() {
+    this.roleService = new RoleService();
     this.userService = new UserService();
     this.emailService = new EmailService();
     this.verificationCodeService = new VerificationCodeService();
   }
 
-  async execute(userData: IUserData): Promise<IUser> {
-    const transaction = await this.userService.startTransaction();
+  async execute(userData: IRegisterUser): Promise<IUser> {
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
     try {
+      const roleId = await this.assignDefaultRole(userData.email);
+      const userDataWithRole = { ...userData, roles: [roleId] };
+
       const user = await this.userService.createUser(
         {
-          name: userData.name,
-          email: userData.email,
-          password: userData.password,
-          roles: userData.roles,
+          name: userDataWithRole.name,
+          email: userDataWithRole.email,
+          password: userDataWithRole.password,
+          roles: userDataWithRole.roles,
         },
-        transaction
+        session
       );
+
       if (!user) {
         throw new UnavailableError("Error creating user");
       }
+
       const verificationCode =
         await this.verificationCodeService.createVerificationCode(
           user._id as string,
-          6
+          6,
+          session
         );
 
       await this.emailService.sendEmail(
-        userData.email,
+        userDataWithRole.email,
         "Verification code",
-        `Your verification code is: ${verificationCode}`
+        `Your verification code is: ${verificationCode.code}. The code will expire in 10 minutes. RUUUNN!`
       );
 
-      await transaction.commitTransaction();
+      await session.commitTransaction();
 
       return user;
     } catch (error) {
-      await transaction.abortTransaction();
-      throw error instanceof UnavailableError
-        ? error
-        : new UnavailableError("Unexpected error during user registration");
+      await session.abortTransaction();
+      throw error;
     } finally {
-      transaction.endSession();
+      session.endSession();
     }
+  }
+
+  private async assignDefaultRole(
+    email: string
+  ): Promise<mongoose.Types.ObjectId> {
+    const roleName = email === serverConfig.OWNER_EMAIL ? "admin" : "user";
+    const role = await this.roleService.getRoleByName(roleName);
+
+    if (!role) {
+      throw new APIError(`Role "${roleName}" not found`);
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(role._id)) {
+      throw new APIError(`Invalid ObjectId for role "${roleName}"`);
+    }
+
+    return role._id;
   }
 }

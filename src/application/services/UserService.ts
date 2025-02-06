@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 import { User } from "../../domain/entities/User";
 import { UserRepositoryImpl } from "../../infrastructure/database/repositories/UserRepositoryImpl";
-import { ConflictError, GoneError } from "../../shared/utils/app-errors";
+import {
+  APIError,
+  ConflictError,
+  GoneError,
+} from "../../shared/utils/app-errors";
 import { IUser } from "../../infrastructure/database/models/UserSchema";
 import { SecurityService } from "../../infrastructure/services/SecurityService";
 import { IUserData } from "../interfaces/IUserService";
@@ -16,7 +20,7 @@ export class UserService {
 
   public async createUser(
     userData: IUserData,
-    transaction?: mongoose.ClientSession
+    session: mongoose.ClientSession
   ): Promise<IUser> {
     const existingUser = await this.userRepository.findByEmail(userData.email);
 
@@ -31,6 +35,14 @@ export class UserService {
       userData.password
     );
 
+    const validRoles = userData.roles.filter((role) =>
+      mongoose.Types.ObjectId.isValid(role)
+    );
+
+    if (validRoles.length !== userData.roles.length) {
+      throw new APIError("Invalid role(s) provided");
+    }
+
     const user = new User(
       userData.name,
       userData.email,
@@ -38,7 +50,9 @@ export class UserService {
       userData.roles
     );
 
-    return await this.userRepository.create(user.toPrimitives(), transaction);
+    const userPrimitives = user.toPrimitives();
+
+    return await this.userRepository.create(userPrimitives, session);
   }
 
   public async getUserByEmail(email: string): Promise<any> {

@@ -16,6 +16,8 @@ export class AuthRouter {
     this.router.post(
       "/signin",
       (req: Request, res: Response, next: NextFunction) => {
+        console.log("Login Route");
+
         this.authController.login(req, res, next);
       }
     );

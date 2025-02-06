@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import { VerificationCodeRepositoryImpl } from "../../infrastructure/database/repositories/VerificationCodeImpl";
 import crypto from "crypto";
+import { IVerificationCode } from "../../infrastructure/database/models/VerificationCodeSchema";
 
 export class VerificationCodeService {
   private verificationCodeRepository: VerificationCodeRepositoryImpl;
@@ -7,7 +9,11 @@ export class VerificationCodeService {
     this.verificationCodeRepository = new VerificationCodeRepositoryImpl();
   }
 
-  public async createVerificationCode(userId: string, length: number = 6) {
+  public async createVerificationCode(
+    userId: string,
+    length: number = 6,
+    session: mongoose.ClientSession
+  ): Promise<IVerificationCode> {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let code = Array.from(crypto.randomBytes(length))
       .map((byte) => characters[byte % characters.length])
@@ -16,11 +22,14 @@ export class VerificationCodeService {
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 10); //10 minutes
 
-    return await this.verificationCodeRepository.create({
-      userId,
-      code,
-      expiresAt: expirationTime,
-    });
+    return await this.verificationCodeRepository.create(
+      {
+        userId,
+        code,
+        expiresAt: expirationTime,
+      },
+      session
+    );
   }
 
   public async verifyVerificationCode(userId: string, code: string) {

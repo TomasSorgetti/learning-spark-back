@@ -8,22 +8,27 @@ import {
 } from "../../shared/utils/app-errors";
 import { TokenService } from "../../infrastructure/services/TokenService";
 import { SessionService } from "../services/SessionService";
+import { Response } from "express";
+import { CookieService } from "../../infrastructure/services/CookieService";
 
 export class LoginUseCase {
   private userService: UserService;
   private securityService: SecurityService;
   private tokenService: TokenService;
   private sessionService: SessionService;
+  private cookieService: CookieService;
 
   constructor() {
     this.userService = new UserService();
     this.securityService = new SecurityService();
     this.tokenService = new TokenService();
     this.sessionService = new SessionService();
+    this.cookieService = new CookieService();
   }
 
-  public async execute(userData: ILoginUser): Promise<any> {
+  public async execute(res: Response, userData: ILoginUser): Promise<any> {
     const existingUser = await this.userService.getUserByEmail(userData.email);
+
     if (!existingUser) {
       throw new NotFoundError("Email not found");
     }
@@ -46,13 +51,16 @@ export class LoginUseCase {
     if (!session) {
       throw new UnauthorizedError("Error creating session");
     }
-    
+
     // create access & refresh token
-    const accessToken = this.tokenService.generateAccessToken({
-      // sub: existingUser.getId(),
-      // email: existingUser.getEmail(),
-      // roles: existingUser.getRoles(),
-    });
+    const accessToken = this.tokenService.generateAccessToken(
+      {
+        // sub: existingUser.getId(),
+        // email: existingUser.getEmail(),
+        // roles: existingUser.getRoles(),
+      },
+      userData.rememberme
+    );
     const refreshToken = this.tokenService.generateRefreshToken(
       {
         // sub: existingUser.getId(),
@@ -61,11 +69,25 @@ export class LoginUseCase {
       },
       userData.rememberme
     );
+    //! Cookies need to expire longer than jwt
+    this.cookieService.createCookie(res, "accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
+      sameSite: "Strict",
+      path: "/",
+    });
+    this.cookieService.createCookie(res, "refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
+      sameSite: "Strict",
+      path: "/",
+    });
 
-    return {
-      user: existingUser.toPrimitives(),
-      accessToken,
-      refreshToken,
-    };
+    const user = existingUser.toPrimitives();
+    console.log(user);
+
+    return user;
   }
 }
