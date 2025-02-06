@@ -26,7 +26,11 @@ export class LoginUseCase {
     this.cookieService = new CookieService();
   }
 
-  public async execute(res: Response, userData: ILoginUser): Promise<any> {
+  public async execute(
+    res: Response,
+    userData: ILoginUser,
+    userAgent: string
+  ): Promise<any> {
     const existingUser = await this.userService.getUserByEmail(userData.email);
 
     if (!existingUser) {
@@ -38,34 +42,26 @@ export class LoginUseCase {
 
     const isPasswordValid = await this.securityService.comparePasswords(
       userData.password,
-      existingUser.getPassword()
+      existingUser.password
     );
     if (!isPasswordValid) {
       throw new UnauthorizedError("Incorrect password");
     }
 
-    // create session
-    const session = await this.sessionService.createSession({
-      userId: existingUser._id,
-    });
-    if (!session) {
-      throw new UnauthorizedError("Error creating session");
-    }
-
     // create access & refresh token
     const accessToken = this.tokenService.generateAccessToken(
       {
-        // sub: existingUser.getId(),
-        // email: existingUser.getEmail(),
-        // roles: existingUser.getRoles(),
+        sub: existingUser._id,
+        email: existingUser.email,
+        roles: existingUser.roles,
       },
       userData.rememberme
     );
     const refreshToken = this.tokenService.generateRefreshToken(
       {
-        // sub: existingUser.getId(),
-        // email: existingUser.getEmail(),
-        // roles: existingUser.getRoles(),
+        sub: existingUser._id,
+        email: existingUser.email,
+        roles: existingUser.roles,
       },
       userData.rememberme
     );
@@ -85,10 +81,26 @@ export class LoginUseCase {
       path: "/",
     });
 
+    // create session
+    const session = await this.sessionService.createSession({
+      userId: existingUser._id,
+      userAgent,
+      refreshToken,
+    });
+    if (!session) {
+      throw new UnauthorizedError("Error creating session");
+    }
+
     return {
-      name: existingUser.name,
-      email: existingUser.email,
-      roles: existingUser.roles,
+      user: {
+        name: existingUser.name,
+        email: existingUser.email,
+        roles: existingUser.roles,
+      },
+      session: {
+        id: session._id,
+        userAgent: session.userAgent,
+      },
     };
   }
 }

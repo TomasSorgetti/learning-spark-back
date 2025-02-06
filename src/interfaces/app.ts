@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import { MainRouter } from "./http/routes/main.router";
 import morgan from "morgan";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 export class App {
   private app: Application;
@@ -17,6 +18,7 @@ export class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(morgan("dev"));
     this.app.use(cors());
+    this.app.use(cookieParser());
   }
 
   private initializeRoutes() {

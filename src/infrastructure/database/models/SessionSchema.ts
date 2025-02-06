@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ISession extends Document {
   userId: mongoose.Types.ObjectId;
   userAgent?: string;
+  refreshToken?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,10 +17,11 @@ const SessionSchema: Schema = new Schema(
       ref: "User",
     },
     userAgent: { type: String },
+    refreshToken: { type: String },
     createdAt: { type: Date, required: true, default: Date.now },
     expiresAt: {
       type: Date,
-      default: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+      default: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
     },
   },
   {

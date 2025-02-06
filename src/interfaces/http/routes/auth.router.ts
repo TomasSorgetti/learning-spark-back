@@ -1,6 +1,7 @@
 // src/interfaces/http/routes/UserRoutes.ts
 import { NextFunction, Request, Response, Router } from "express";
 import { AuthController } from "../controllers/AuthController";
+import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 
 export class AuthRouter {
   public router: Router;
@@ -16,8 +17,6 @@ export class AuthRouter {
     this.router.post(
       "/signin",
       (req: Request, res: Response, next: NextFunction) => {
-        console.log("Login Route");
-
         this.authController.login(req, res, next);
       }
     );
@@ -33,6 +32,14 @@ export class AuthRouter {
       "/verify",
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.verify(req, res, next);
+      }
+    );
+
+    this.router.post(
+      "/logout",
+      authenticateToken,
+      (req: Request, res: Response, next: NextFunction) => {
+        this.authController.logout(req, res, next);
       }
     );
   }
