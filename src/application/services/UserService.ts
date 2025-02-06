@@ -18,10 +18,7 @@ export class UserService {
     this.userRepository = new UserRepositoryImpl();
   }
 
-  public async createUser(
-    userData: IUserData,
-    session: mongoose.ClientSession
-  ): Promise<IUser> {
+  public async createUser(userData: IUserData): Promise<IUser> {
     const existingUser = await this.userRepository.findByEmail(userData.email);
 
     if (existingUser) {
@@ -52,16 +49,16 @@ export class UserService {
 
     const userPrimitives = user.toPrimitives();
 
-    return await this.userRepository.create(userPrimitives, session);
+    return await this.userRepository.create(userPrimitives);
   }
-
+  public async cancelCreate(userId: string): Promise<any> {
+    return await this.userRepository.cancelCreate(userId);
+  }
   public async getUserByEmail(email: string): Promise<any> {
-    return await this.userRepository.findByEmail(email);
+    return await this.userRepository.findByEmail(email)
   }
 
-  public async startTransaction(): Promise<mongoose.ClientSession> {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    return session;
+  public async verifyUser(userId: string): Promise<any> {
+    return await this.userRepository.verifyUser(userId);
   }
 }

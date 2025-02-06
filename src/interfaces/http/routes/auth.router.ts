@@ -28,6 +28,13 @@ export class AuthRouter {
         this.authController.register(req, res, next);
       }
     );
+
+    this.router.patch(
+      "/verify",
+      (req: Request, res: Response, next: NextFunction) => {
+        this.authController.verify(req, res, next);
+      }
+    );
   }
 
   public getRouter() {

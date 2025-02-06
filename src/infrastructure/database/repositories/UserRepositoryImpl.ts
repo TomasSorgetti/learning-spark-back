@@ -4,19 +4,27 @@ import mongoose from "mongoose";
 
 export class UserRepositoryImpl implements IUserRepository {
   async findById(id: string): Promise<IUser | null> {
-    return UserModel.findById(id).exec();
+    return UserModel.findById(id).populate("roles", "name").exec();
   }
 
   async findByEmail(email: string): Promise<IUser | null> {
-    return UserModel.findOne({ email }).exec();
+    return UserModel.findOne({ email }).populate("roles", "name").exec();
   }
 
-  async create(
-    user: Partial<IUser>,
-    session: mongoose.ClientSession
-  ): Promise<IUser> {
+  async create(user: Partial<IUser>): Promise<IUser> {
     const newUser = new UserModel(user);
 
-    return await newUser.save({ session });
+    return await newUser.save();
+  }
+  async cancelCreate(userId: string): Promise<any> {
+    return await UserModel.deleteOne({ _id: userId });
+  }
+
+  async verifyUser(userId: string): Promise<any> {
+    return await UserModel.findOneAndUpdate(
+      { _id: userId },
+      { validated: true },
+      { new: true }
+    );
   }
 }

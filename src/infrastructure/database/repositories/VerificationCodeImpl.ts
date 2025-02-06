@@ -8,17 +8,14 @@ import mongoose from "mongoose";
 export class VerificationCodeRepositoryImpl
   implements IVerificationCodeRepository
 {
-  async create(
-    data: Partial<IVerificationCode>,
-    session: mongoose.ClientSession
-  ): Promise<IVerificationCode> {
+  async create(data: Partial<IVerificationCode>): Promise<IVerificationCode> {
     const newCode = new VerificationCodeModel({
       userId: data.userId,
       code: data.code,
       expiresAt: data.expiresAt,
     });
 
-    return await newCode.save({ session });
+    return await newCode.save();
   }
 
   async findByUserIdAndCode(

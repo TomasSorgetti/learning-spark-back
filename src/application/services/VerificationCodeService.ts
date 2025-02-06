@@ -11,8 +11,7 @@ export class VerificationCodeService {
 
   public async createVerificationCode(
     userId: string,
-    length: number = 6,
-    session: mongoose.ClientSession
+    length: number = 6
   ): Promise<IVerificationCode> {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let code = Array.from(crypto.randomBytes(length))
@@ -27,8 +26,7 @@ export class VerificationCodeService {
         userId,
         code,
         expiresAt: expirationTime,
-      },
-      session
+      }
     );
   }
 
@@ -40,13 +38,13 @@ export class VerificationCodeService {
       );
 
     if (!verificationCode) {
-      throw new Error("Código incorrecto o expirado");
+      throw new Error("Invalid code or code has expired");
     }
 
     const now = new Date();
     if (verificationCode.expiresAt < now) {
       await this.verificationCodeRepository.delete(userId, code);
-      throw new Error("El código ha expirado");
+      throw new Error("The code has expired");
     }
 
     await this.verificationCodeRepository.delete(userId, code);

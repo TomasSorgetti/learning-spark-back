@@ -85,9 +85,10 @@ export class LoginUseCase {
       path: "/",
     });
 
-    const user = existingUser.toPrimitives();
-    console.log(user);
-
-    return user;
+    return {
+      name: existingUser.name,
+      email: existingUser.email,
+      roles: existingUser.roles,
+    };
   }
 }

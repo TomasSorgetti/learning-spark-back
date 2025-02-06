@@ -22,32 +22,25 @@ export class RegisterUserUseCase {
   }
 
   async execute(userData: IRegisterUser): Promise<IUser> {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    const roleId = await this.assignDefaultRole(userData.email);
+    const userDataWithRole = { ...userData, roles: [roleId] };
+
+    const user = await this.userService.createUser({
+      name: userDataWithRole.name,
+      email: userDataWithRole.email,
+      password: userDataWithRole.password,
+      roles: userDataWithRole.roles,
+    });
+
+    if (!user) {
+      throw new UnavailableError("Error creating user");
+    }
 
     try {
-      const roleId = await this.assignDefaultRole(userData.email);
-      const userDataWithRole = { ...userData, roles: [roleId] };
-
-      const user = await this.userService.createUser(
-        {
-          name: userDataWithRole.name,
-          email: userDataWithRole.email,
-          password: userDataWithRole.password,
-          roles: userDataWithRole.roles,
-        },
-        session
-      );
-
-      if (!user) {
-        throw new UnavailableError("Error creating user");
-      }
-
       const verificationCode =
         await this.verificationCodeService.createVerificationCode(
           user._id as string,
-          6,
-          session
+          6
         );
 
       await this.emailService.sendEmail(
@@ -56,14 +49,12 @@ export class RegisterUserUseCase {
         `Your verification code is: ${verificationCode.code}. The code will expire in 10 minutes. RUUUNN!`
       );
 
-      await session.commitTransaction();
-
       return user;
     } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
+      await this.userService.cancelCreate(user._id as string);
+      throw new UnavailableError(
+        "Error creating verification code or sending email"
+      );
     }
   }
 

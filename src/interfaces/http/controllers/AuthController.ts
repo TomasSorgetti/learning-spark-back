@@ -2,14 +2,17 @@ import { NextFunction, Request, Response } from "express";
 import { validateUserData } from "../../../shared/validators/userValidator";
 import { LoginUseCase } from "../../../application/use-cases/loginUseCase";
 import { RegisterUserUseCase } from "../../../application/use-cases/RegisterUserUseCase";
+import { VerifyUserUseCase } from "../../../application/use-cases/VerifyUserUseCase";
 
 export class AuthController {
   private loginUseCase: LoginUseCase;
   private registerUserUseCase: RegisterUserUseCase;
+  private verifyUserUseCase: VerifyUserUseCase;
 
   constructor() {
     this.loginUseCase = new LoginUseCase();
     this.registerUserUseCase = new RegisterUserUseCase();
+    this.verifyUserUseCase = new VerifyUserUseCase();
   }
 
   public async register(req: Request, res: Response, next: NextFunction) {
@@ -46,7 +49,10 @@ export class AuthController {
 
   public async verify(req: Request, res: Response, next: NextFunction) {
     try {
-      return res.status(200);
+      const { userId, code } = req.body;
+
+      const response = await this.verifyUserUseCase.execute(userId, code);
+      return res.status(200).json(response);
     } catch (error: any) {
       next(error);
     }

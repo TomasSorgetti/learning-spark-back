@@ -6,5 +6,7 @@ export class SessionService {
     this.sessionRepository = new SessionRepositoryImpl();
   }
 
-  public async createSession(sessionData: any): Promise<any> {}
+  public async createSession(sessionData: any): Promise<any> {
+    return true;
+  }
 }
