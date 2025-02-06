@@ -9,7 +9,7 @@ export class SessionService {
   public async createSession(sessionData: any): Promise<any> {
     return await this.sessionRepository.create(sessionData);
   }
-  public async deleteSession(userId: string): Promise<any> {
-    return await this.sessionRepository.delete(userId);
+  public async deleteSession(sessionId: string): Promise<any> {
+    return await this.sessionRepository.delete(sessionId);
   }
 }

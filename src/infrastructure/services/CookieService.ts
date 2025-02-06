@@ -25,4 +25,5 @@ export class CookieService {
   public removeCookie(res: Response, name: string): void {
     res.clearCookie(name, { path: "/" });
   }
+
 }
