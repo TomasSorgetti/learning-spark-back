@@ -2,6 +2,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
+import authenticateRefreshToken from "../../../infrastructure/middlewares/authenticateRefresh";
 
 export class AuthRouter {
   public router: Router;
@@ -35,11 +36,27 @@ export class AuthRouter {
       }
     );
 
+    this.router.get(
+      "/me",
+      authenticateToken,
+      (req: Request, res: Response, next: NextFunction) => {
+        this.authController.profile(req, res, next);
+      }
+    );
+
     this.router.post(
       "/logout",
       authenticateToken,
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.logout(req, res, next);
+      }
+    );
+
+    this.router.get(
+      "/refresh",
+      authenticateRefreshToken,
+      (req: Request, res: Response, next: NextFunction) => {
+        this.authController.refresh(req, res, next);
       }
     );
   }

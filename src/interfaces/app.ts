@@ -17,7 +17,13 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(morgan("dev"));
-    this.app.use(cors());
+    this.app.use(
+      cors({
+        credentials: true,
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST", "PATCH", "DELETE"],
+      })
+    );
     this.app.use(cookieParser());
   }
 

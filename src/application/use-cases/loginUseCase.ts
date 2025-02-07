@@ -70,14 +70,14 @@ export class LoginUseCase {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
-      sameSite: "Strict",
+      sameSite: "Lax", // Strict for https
       path: "/",
     });
     this.cookieService.createCookie(res, "refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
-      sameSite: "Strict",
+      sameSite: "Lax", // Strict for https
       path: "/",
     });
 
@@ -94,7 +94,7 @@ export class LoginUseCase {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 24 * 60 * 60 * 1000, // 60 días
-      sameSite: "Strict",
+      sameSite: "Lax", // Strict for https
       path: "/",
     });
 

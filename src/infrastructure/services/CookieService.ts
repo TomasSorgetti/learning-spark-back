@@ -13,7 +13,7 @@ export class CookieService {
       httpOnly: true,
       secure: true,
       maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
-      sameSite: "Strict",
+      sameSite: "Lax", // Strict for https
       path: "/",
     };
 
@@ -25,5 +25,4 @@ export class CookieService {
   public removeCookie(res: Response, name: string): void {
     res.clearCookie(name, { path: "/" });
   }
-
 }

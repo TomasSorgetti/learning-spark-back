@@ -25,17 +25,25 @@ export class TokenService {
 
   public verifyAccessToken = (token: string): object | string => {
     try {
-      return jwt.verify(token, tokenConfig.ACCESS_SECRET); 
-    } catch (error) {
-      throw new UnauthorizedError("Invalid or expired access token"); 
+      return jwt.verify(token, tokenConfig.ACCESS_SECRET);
+    } catch (error: any) {
+      if (error.name === "TokenExpiredError") {
+        throw new UnauthorizedError("Token expired");
+      }
+      throw new UnauthorizedError("Invalid or malformed access token");
     }
   };
 
   public verifyRefreshToken = (token: string): object | string => {
     try {
-      return jwt.verify(token, tokenConfig.REFRESH_SECRET); 
-    } catch (error) {
-      throw new UnauthorizedError("Invalid or expired refresh token");
+      return jwt.verify(token, tokenConfig.REFRESH_SECRET);
+    } catch (error: any) {
+      console.log("Verify Refresh Token Service", error.name);
+      if (error.name === "TokenExpiredError") {
+        throw new UnauthorizedError("Token expired");
+      }
+
+      throw new UnauthorizedError("Invalid or malformed refresh token");
     }
   };
 }

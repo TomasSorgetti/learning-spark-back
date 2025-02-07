@@ -51,11 +51,16 @@ export class UserService {
 
     return await this.userRepository.create(userPrimitives);
   }
+
   public async cancelCreate(userId: string): Promise<any> {
     return await this.userRepository.cancelCreate(userId);
   }
+
   public async getUserByEmail(email: string): Promise<any> {
     return await this.userRepository.findByEmail(email)
+  }
+  public async getUserById(userId: string): Promise<any> {
+    return await this.userRepository.findById(userId)
   }
 
   public async verifyUser(userId: string): Promise<any> {
