@@ -52,8 +52,8 @@ export class RegisterUserUseCase {
 
       await this.emailService.sendEmail(
         userDataWithRole.email,
-        "Verification code",
-        `Your verification code is: ${verificationCode.code}. The code will expire in 10 minutes. RUUUNN!`
+        `Verification code. ${verificationCode.code}`,
+        `Your verification code is: ${verificationCode.code}. The code will expire in 10 minutes.`
       );
 
       this.cookieService.createCookie(
@@ -66,7 +66,7 @@ export class RegisterUserUseCase {
         {
           httpOnly: false,
           secure: true,
-          maxAge: 20 * 60 * 1000, // 20 minutes
+          maxAge: 10 * 60 * 1000, // 10 minutes
           sameSite: "Strict",
           path: "/",
         }

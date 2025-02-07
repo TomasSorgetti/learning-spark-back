@@ -37,17 +37,16 @@ export class VerificationCodeService {
       );
 
     if (!verificationCode) {
-      throw new BadRequestError("Invalid code or code has expired");
+      return { isValid: false, reason: "invalid" };
     }
 
     const now = new Date();
     if (verificationCode.expiresAt < now) {
       await this.verificationCodeRepository.delete(userId, code);
-      throw new BadRequestError("The code has expired");
+      return { isValid: false, reason: "expired" };
     }
 
     await this.verificationCodeRepository.delete(userId, code);
-
-    return true;
+    return { isValid: true };
   }
 }

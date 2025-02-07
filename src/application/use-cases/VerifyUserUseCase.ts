@@ -15,11 +15,20 @@ export class VerifyUserUseCase {
   }
 
   public async execute(userId: string, code: string): Promise<any> {
-    const isCodeValid =
+    if (!userId || !code) {
+      throw new BadRequestError("Fields are required.");
+    }
+
+    const verificationResult =
       await this.verificationCodeService.verifyVerificationCode(userId, code);
 
-    if (!isCodeValid) {
-      throw new BadRequestError("Invalid or expired verification code.");
+    if (!verificationResult.isValid) {
+      if (verificationResult.reason === "invalid") {
+        throw new BadRequestError("Invalid verification code.");
+      }
+      if (verificationResult.reason === "expired") {
+        throw new BadRequestError("Verification code has expired.");
+      }
     }
 
     const user = await this.userService.verifyUser(userId);
