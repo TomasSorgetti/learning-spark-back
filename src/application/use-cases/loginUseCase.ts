@@ -80,7 +80,7 @@ export class LoginUseCase {
       sameSite: "Strict",
       path: "/",
     });
-    
+
     // create session
     const session = await this.sessionService.createSession({
       userId: existingUser._id,

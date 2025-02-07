@@ -25,7 +25,10 @@ export class RegisterUserUseCase {
     this.cookieService = new CookieService();
   }
 
-  async execute(res: Response, userData: IRegisterUser): Promise<IUser> {
+  async execute(
+    res: Response,
+    userData: IRegisterUser
+  ): Promise<Partial<IUser>> {
     const roleId = await this.assignDefaultRole(userData.email);
     const userDataWithRole = { ...userData, roles: [roleId] };
 
@@ -69,7 +72,13 @@ export class RegisterUserUseCase {
         }
       );
 
-      return user;
+      return {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        roles: user.roles,
+        createdAt: user.createdAt,
+      };
     } catch (error) {
       await this.userService.cancelCreate(user._id as string);
       throw new UnavailableError(

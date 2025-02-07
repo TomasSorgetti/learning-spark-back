@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { VerificationCodeRepositoryImpl } from "../../infrastructure/database/repositories/VerificationCodeImpl";
 import crypto from "crypto";
 import { IVerificationCode } from "../../infrastructure/database/models/VerificationCodeSchema";
+import { BadRequestError } from "../../shared/utils/app-errors";
 
 export class VerificationCodeService {
   private verificationCodeRepository: VerificationCodeRepositoryImpl;
@@ -21,13 +22,11 @@ export class VerificationCodeService {
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 10); //10 minutes
 
-    return await this.verificationCodeRepository.create(
-      {
-        userId,
-        code,
-        expiresAt: expirationTime,
-      }
-    );
+    return await this.verificationCodeRepository.create({
+      userId,
+      code,
+      expiresAt: expirationTime,
+    });
   }
 
   public async verifyVerificationCode(userId: string, code: string) {
@@ -38,13 +37,13 @@ export class VerificationCodeService {
       );
 
     if (!verificationCode) {
-      throw new Error("Invalid code or code has expired");
+      throw new BadRequestError("Invalid code or code has expired");
     }
 
     const now = new Date();
     if (verificationCode.expiresAt < now) {
       await this.verificationCodeRepository.delete(userId, code);
-      throw new Error("The code has expired");
+      throw new BadRequestError("The code has expired");
     }
 
     await this.verificationCodeRepository.delete(userId, code);
