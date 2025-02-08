@@ -32,7 +32,7 @@ export class PostRouter {
     );
 
     this.router.get(
-      "/:_id",
+      "/:url",
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.getPost(req, res, next);
       }

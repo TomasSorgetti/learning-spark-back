@@ -61,9 +61,9 @@ export class PostController {
 
   public async getPost(req: Request, res: Response, next: NextFunction) {
     try {
-      const { _id } = req.params;
+      const { url } = req.params;
 
-      const response = await this.postService.getPost(_id);
+      const response = await this.postService.getPost(url);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);

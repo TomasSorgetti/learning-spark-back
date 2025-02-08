@@ -32,10 +32,10 @@ export class PostRepositoryImpl implements IPostRepository {
     return PostModel.findByIdAndDelete(postId).exec();
   }
 
-  async getById(postId: string): Promise<IPost | null> {
-    const post = await PostModel.findById(postId).populate("subjectId").exec();
+  async getByUrl(url: string): Promise<IPost | null> {
+    const post = await PostModel.findOne({ url }).populate("subjectId").exec();
     if (!post) {
-      throw new ConflictError(`Post with ID ${postId} not found`);
+      throw new ConflictError(`Post with url ${url} not found`);
     }
     return post;
   }

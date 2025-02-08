@@ -25,15 +25,15 @@ export class PostService {
     return await this.postRepository.delete(_id);
   }
 
-  public async getPost(_id: string): Promise<any> {
-    const cacheKey = `post-${_id}`;
+  public async getPost(url: string): Promise<any> {
+    const cacheKey = `post-${url}`;
     const cachedPost = await RedisCache.get(cacheKey);
 
     if (cachedPost && typeof cachedPost === "string") {
       return JSON.parse(cachedPost);
     }
 
-    const post = await this.postRepository.getById(_id);
+    const post = await this.postRepository.getByUrl(url);
 
     await RedisCache.set(cacheKey, JSON.stringify(post), 3600);
 

@@ -16,6 +16,7 @@ export class RefreshUseCase {
   }
 
   public async execute(
+    rememberme: boolean,
     userId: string,
     sessionId: string,
     res: Response
@@ -34,14 +35,13 @@ export class RefreshUseCase {
       throw new BadRequestError("User not validated");
     }
 
-    // create access & refresh token
     const accessToken = this.tokenService.generateAccessToken(
       {
         sub: user._id,
         email: user.email,
         roles: user.roles,
       },
-      false
+      rememberme
     );
     const refreshToken = this.tokenService.generateRefreshToken(
       {
@@ -49,8 +49,9 @@ export class RefreshUseCase {
         email: user.email,
         roles: user.roles,
       },
-      false
+      rememberme
     );
+
     this.cookieService.createCookie(res, "accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

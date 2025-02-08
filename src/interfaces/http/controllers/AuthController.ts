@@ -102,10 +102,12 @@ export class AuthController {
 
   public async refresh(req: CustomRequest, res: Response, next: NextFunction) {
     try {
+      const rememberme = req.query.rememberme === "true" ? true : false;
       const userId = req.userId || "";
       const sessionId = req.sessionId || "";
 
       const response = await this.refreshUseCase.execute(
+        rememberme,
         userId,
         sessionId,
         res
