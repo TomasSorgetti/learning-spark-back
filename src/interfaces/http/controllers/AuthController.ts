@@ -78,10 +78,9 @@ export class AuthController {
 
   public async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await this.logoutUseCase.execute(
-        res,
-        req.cookies.sessionId
-      );
+      const { sessionId } = req.query as { sessionId: string };
+
+      const response = await this.logoutUseCase.execute(res, sessionId);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);

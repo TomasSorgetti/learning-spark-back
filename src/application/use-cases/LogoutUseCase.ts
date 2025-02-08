@@ -21,11 +21,17 @@ export class LogoutUseCase {
   }
 
   public async execute(res: Response, sessionId: string): Promise<any> {
+    if (!sessionId) {
+      throw new NotFoundError("Fields are required.");
+    }
     this.cookieService.removeCookie(res, "accessToken");
     this.cookieService.removeCookie(res, "refreshToken");
 
-    await this.sessionService.deleteSession(sessionId);
+    const session = await this.sessionService.deleteSession(sessionId);
 
+    if (!session) {
+      throw new GoneError("Session not found");
+    }
     return { message: "Logged out successfully" };
   }
 }
