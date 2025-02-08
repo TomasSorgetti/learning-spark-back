@@ -9,6 +9,7 @@ import { RefreshUseCase } from "../../../application/use-cases/refreshUseCase";
 
 interface CustomRequest extends Request {
   userId?: string;
+  sessionId?: string;
 }
 
 export class AuthController {
@@ -68,6 +69,7 @@ export class AuthController {
   public async verify(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId, code } = req.body;
+      //TODO=> add session id?
 
       const response = await this.verifyUserUseCase.execute(userId, code);
       return res.status(200).json(response);
@@ -76,9 +78,9 @@ export class AuthController {
     }
   }
 
-  public async logout(req: Request, res: Response, next: NextFunction) {
+  public async logout(req: CustomRequest, res: Response, next: NextFunction) {
     try {
-      const { sessionId } = req.query as { sessionId: string };
+      const sessionId = req.sessionId || "";
 
       const response = await this.logoutUseCase.execute(res, sessionId);
       return res.status(200).json(response);
@@ -90,6 +92,7 @@ export class AuthController {
   public async profile(req: CustomRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.userId || "";
+
       const response = await this.profileUseCase.execute(userId);
       return res.status(200).json(response);
     } catch (error: any) {
@@ -100,8 +103,13 @@ export class AuthController {
   public async refresh(req: CustomRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.userId || "";
+      const sessionId = req.sessionId || "";
 
-      const response = await this.refreshUseCase.execute(userId, res);
+      const response = await this.refreshUseCase.execute(
+        userId,
+        sessionId,
+        res
+      );
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);

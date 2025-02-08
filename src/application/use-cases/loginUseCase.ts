@@ -91,16 +91,18 @@ export class LoginUseCase {
       throw new UnauthorizedError("Error creating session");
     }
 
+    this.cookieService.createCookie(res, "sessionId", session._id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
+      sameSite: "Lax", // Strict for https
+      path: "/",
+    });
+
     return {
-      user: {
-        name: existingUser.name,
-        email: existingUser.email,
-        roles: existingUser.roles,
-      },
-      session: {
-        id: session._id,
-        userAgent: session.userAgent,
-      },
+      name: existingUser.name,
+      email: existingUser.email,
+      roles: existingUser.roles,
     };
   }
 }

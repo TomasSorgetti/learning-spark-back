@@ -15,8 +15,12 @@ export class RefreshUseCase {
     this.tokenService = new TokenService();
   }
 
-  public async execute(userId: string, res: Response): Promise<any> {
-    if (!userId) {
+  public async execute(
+    userId: string,
+    sessionId: string,
+    res: Response
+  ): Promise<any> {
+    if (!userId || !sessionId) {
       throw new BadRequestError("Fields are required.");
     }
     const user = await this.userService.getUserById(userId);
@@ -55,6 +59,13 @@ export class RefreshUseCase {
       path: "/",
     });
     this.cookieService.createCookie(res, "refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
+      sameSite: "Lax", // Strict for https
+      path: "/",
+    });
+    this.cookieService.createCookie(res, "sessionId", sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days
