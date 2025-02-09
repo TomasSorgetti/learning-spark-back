@@ -6,8 +6,15 @@ export class SessionService {
     this.sessionRepository = new SessionRepositoryImpl();
   }
 
-  public async getAllSession(userId: string): Promise<any> {
-    return await this.sessionRepository.getAll(userId);
+  public async getAllSession(userId: string, sessionId: string): Promise<any> {
+    const allSessions = await this.sessionRepository.getAll(userId, sessionId);
+
+    const currentSession = await this.sessionRepository.getOne(sessionId);
+
+    return {
+      allSessions,
+      currentSession,
+    };
   }
 
   public async getSession(sessionId: string): Promise<any> {

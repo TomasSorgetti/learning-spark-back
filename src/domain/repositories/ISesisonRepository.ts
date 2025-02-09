@@ -1,7 +1,8 @@
 import { ISession } from "../../infrastructure/database/models/SessionSchema";
 
 export interface ISessionRepository {
-  getAll(userId: string): Promise<ISession[] | []>;
+  getAll(userId: string, sessionId: string): Promise<ISession[] | []>;
+  getOne(sessionId: string): Promise<ISession | null>;
   getById(sessionId: string): Promise<ISession | null>;
   create(code: Partial<ISession>): Promise<ISession>;
   delete(userId: string): Promise<any>;

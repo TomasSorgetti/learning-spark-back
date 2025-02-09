@@ -1,10 +1,20 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { ISession, SessionModel } from "../models/SessionSchema";
 import { ISessionRepository } from "../../../domain/repositories/ISesisonRepository";
 
 export class SessionRepositoryImpl implements ISessionRepository {
-  async getAll(userId: string): Promise<ISession[] | []> {
-    return await SessionModel.find({ userId });
+  async getAll(userId: string, sessionId: string): Promise<ISession[] | []> {
+    const sessionObjectId = new Types.ObjectId(sessionId);
+    return await SessionModel.find({
+      userId,
+      _id: { $ne: sessionObjectId },
+    }).select("-refreshToken");
+  }
+
+  async getOne(sessionId: string): Promise<ISession | null> {
+    return await SessionModel.findOne({ _id: sessionId }).select(
+      "-refreshToken"
+    );
   }
   async getById(sessionId: string): Promise<ISession | null> {
     return await SessionModel.findOne({ _id: sessionId });

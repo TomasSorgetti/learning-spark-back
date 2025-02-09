@@ -19,8 +19,12 @@ export class SessionController {
   ) {
     try {
       const userId = req.userId || "";
+      const sessionId = req.sessionId || "";
 
-      const response = await this.sessionService.getAllSession(userId);
+      const response = await this.sessionService.getAllSession(
+        userId,
+        sessionId
+      );
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);

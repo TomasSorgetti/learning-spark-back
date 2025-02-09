@@ -15,6 +15,7 @@ const isAdminGuard = async (
 ) => {
   try {
     const userId = req.userId;
+
     if (!userId) {
       throw new UnauthorizedError("No user id provided");
     }
