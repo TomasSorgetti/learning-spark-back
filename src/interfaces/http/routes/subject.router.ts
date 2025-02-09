@@ -1,6 +1,8 @@
 // src/interfaces/http/routes/UserRoutes.ts
 import { NextFunction, Request, Response, Router } from "express";
 import { SubjectController } from "../controllers/SubjectController";
+import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
+import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 
 export class SubjectRouter {
   public router: Router;
@@ -13,12 +15,19 @@ export class SubjectRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.post("/", (req: Request, res: Response, next: NextFunction) => {
-      this.subjectController.createSubject(req, res, next);
-    });
+    this.router.post(
+      "/",
+      authenticateToken,
+      isAdminGuard,
+      (req: Request, res: Response, next: NextFunction) => {
+        this.subjectController.createSubject(req, res, next);
+      }
+    );
 
     this.router.patch(
       "/:_id",
+      authenticateToken,
+      isAdminGuard,
       (req: Request, res: Response, next: NextFunction) => {
         this.subjectController.updateSubject(req, res, next);
       }
@@ -26,6 +35,8 @@ export class SubjectRouter {
 
     this.router.delete(
       "/:_id",
+      authenticateToken,
+      isAdminGuard,
       (req: Request, res: Response, next: NextFunction) => {
         this.subjectController.deleteSubject(req, res, next);
       }

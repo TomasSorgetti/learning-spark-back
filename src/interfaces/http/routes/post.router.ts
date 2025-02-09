@@ -1,6 +1,8 @@
 // src/interfaces/http/routes/UserRoutes.ts
 import { NextFunction, Request, Response, Router } from "express";
 import { PostController } from "../controllers/PostController";
+import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
+import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 
 export class PostRouter {
   public router: Router;
@@ -13,12 +15,19 @@ export class PostRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.post("/", (req: Request, res: Response, next: NextFunction) => {
-      this.postController.createPost(req, res, next);
-    });
+    this.router.post(
+      "/",
+      authenticateToken,
+      isAdminGuard,
+      (req: Request, res: Response, next: NextFunction) => {
+        this.postController.createPost(req, res, next);
+      }
+    );
 
     this.router.patch(
       "/:_id",
+      authenticateToken,
+      isAdminGuard,
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.updatePost(req, res, next);
       }
@@ -26,6 +35,8 @@ export class PostRouter {
 
     this.router.delete(
       "/:_id",
+      authenticateToken,
+      isAdminGuard,
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.deletePost(req, res, next);
       }

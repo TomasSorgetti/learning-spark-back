@@ -57,10 +57,13 @@ export class UserService {
   }
 
   public async getUserByEmail(email: string): Promise<any> {
-    return await this.userRepository.findByEmail(email)
+    return await this.userRepository.findByEmail(email);
   }
   public async getUserById(userId: string): Promise<any> {
-    return await this.userRepository.findById(userId)
+    return await this.userRepository.findById(userId);
+  }
+  public async getAllUsers(): Promise<any[]> {
+    return await this.userRepository.findAll();
   }
 
   public async verifyUser(userId: string): Promise<any> {

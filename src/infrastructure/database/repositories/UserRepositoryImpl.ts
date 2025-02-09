@@ -11,6 +11,10 @@ export class UserRepositoryImpl implements IUserRepository {
     return UserModel.findOne({ email }).populate("roles", "name").exec();
   }
 
+  async findAll(): Promise<IUser[] | []> {
+    return UserModel.find().populate("roles", "name").exec();
+  }
+
   async create(user: Partial<IUser>): Promise<IUser> {
     const newUser = new UserModel(user);
 

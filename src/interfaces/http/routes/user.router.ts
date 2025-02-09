@@ -1,6 +1,8 @@
 // src/interfaces/http/routes/UserRoutes.ts
 import { NextFunction, Request, Response, Router } from "express";
 import { UserController } from "../controllers/UserController";
+import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
+import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 
 export class UserRouter {
   public router: Router;
@@ -13,9 +15,14 @@ export class UserRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.use("/", (req: Request, res: Response, next: NextFunction) => {
-      this.userController.createUser(req, res, next);
-    });
+    this.router.get(
+      "/",
+      authenticateToken,
+      isAdminGuard,
+      (req: Request, res: Response, next: NextFunction) => {
+        this.userController.getAllUsers(req, res, next);
+      }
+    );
   }
 
   public getRouter() {

@@ -8,9 +8,10 @@ export class UserController {
     this.userService = new UserService();
   }
 
-  public async createUser(req: Request, res: Response, next: NextFunction) {
+  public async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      return res.status(201).json();
+      const response = await this.userService.getAllUsers();
+      return res.status(201).json(response);
     } catch (error: any) {
       next(error);
     }
