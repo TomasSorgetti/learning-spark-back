@@ -20,6 +20,13 @@ export class SessionRouter {
         this.sessionController.getAllSessions(req, res, next);
       }
     );
+    this.router.delete(
+      "/",
+      authenticateToken,
+      (req: Request, res: Response, next: NextFunction) => {
+        this.sessionController.deleteSession(req, res, next);
+      }
+    );
   }
 
   public getRouter() {

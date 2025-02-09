@@ -24,6 +24,7 @@ export class SessionRepositoryImpl implements ISessionRepository {
     return await newSession.save();
   }
   async delete(sessionId: string): Promise<any> {
-    return await SessionModel.deleteOne({ _id: sessionId });
+    const sessionObjectId = new Types.ObjectId(sessionId);
+    return await SessionModel.deleteOne({ _id: sessionObjectId });
   }
 }
