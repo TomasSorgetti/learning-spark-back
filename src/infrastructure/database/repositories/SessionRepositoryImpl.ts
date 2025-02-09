@@ -3,6 +3,9 @@ import { ISession, SessionModel } from "../models/SessionSchema";
 import { ISessionRepository } from "../../../domain/repositories/ISesisonRepository";
 
 export class SessionRepositoryImpl implements ISessionRepository {
+  async getAll(userId: string): Promise<ISession[] | []> {
+    return await SessionModel.find({ userId });
+  }
   async getById(sessionId: string): Promise<ISession | null> {
     return await SessionModel.findOne({ _id: sessionId });
   }
