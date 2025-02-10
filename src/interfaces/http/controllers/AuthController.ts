@@ -6,6 +6,7 @@ import { VerifyUserUseCase } from "../../../application/use-cases/VerifyUserUseC
 import { LogoutUseCase } from "../../../application/use-cases/LogoutUseCase";
 import { ProfileUseCase } from "../../../application/use-cases/ProfileUseCase";
 import { RefreshUseCase } from "../../../application/use-cases/refreshUseCase";
+import { ResendCodeUseCase } from "../../../application/use-cases/ResendCodeUseCase";
 
 interface CustomRequest extends Request {
   userId?: string;
@@ -19,6 +20,7 @@ export class AuthController {
   private logoutUseCase: LogoutUseCase;
   private profileUseCase: ProfileUseCase;
   private refreshUseCase: RefreshUseCase;
+  private resendCodeUseCase: ResendCodeUseCase;
 
   constructor() {
     this.loginUseCase = new LoginUseCase();
@@ -27,6 +29,7 @@ export class AuthController {
     this.logoutUseCase = new LogoutUseCase();
     this.profileUseCase = new ProfileUseCase();
     this.refreshUseCase = new RefreshUseCase();
+    this.resendCodeUseCase = new ResendCodeUseCase();
   }
 
   public async register(req: Request, res: Response, next: NextFunction) {
@@ -40,6 +43,17 @@ export class AuthController {
         email,
         password,
       });
+      return res.status(200).json(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  public async resendCode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.body;
+      
+      const response = await this.resendCodeUseCase.execute(res, userId);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);

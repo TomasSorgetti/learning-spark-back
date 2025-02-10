@@ -1,8 +1,10 @@
-// src/interfaces/http/routes/UserRoutes.ts
 import { NextFunction, Request, Response, Router } from "express";
 import { UserController } from "../controllers/UserController";
 import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
+import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
+import { UpdatePasswordDTO } from "../../../application/dtos/UpdatePasswordDTO";
+import { changePasswordLimiter } from "../../../infrastructure/middlewares/rateLimiter";
 
 export class UserRouter {
   public router: Router;
@@ -21,6 +23,16 @@ export class UserRouter {
       isAdminGuard,
       (req: Request, res: Response, next: NextFunction) => {
         this.userController.getAllUsers(req, res, next);
+      }
+    );
+
+    this.router.patch(
+      "/change-password",
+      changePasswordLimiter,
+      authenticateToken,
+      validateDTO(UpdatePasswordDTO),
+      (req: Request, res: Response, next: NextFunction) => {
+        this.userController.changePassword(req, res, next);
       }
     );
   }

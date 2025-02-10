@@ -29,6 +29,45 @@ export class VerificationCodeService {
     });
   }
 
+  public async updateVerificationCode(
+    userId: string,
+    length: number = 6
+  ): Promise<IVerificationCode> {
+    if (!userId) throw new BadRequestError("Fields are required.");
+
+    const verificationCode = await this.verificationCodeRepository.findByUserId(
+      userId
+    );
+
+    if (!verificationCode)
+      throw new BadRequestError("User does not have a verification code.");
+
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let newCode = Array.from(crypto.randomBytes(length))
+      .map((byte) => characters[byte % characters.length])
+      .join("");
+
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 10); //10 minutes
+
+    const updatedVerificationCode =
+      await this.verificationCodeRepository.update({
+        userId,
+        code: newCode,
+        expiresAt: expirationTime,
+      });
+      
+
+    if (!updatedVerificationCode) {
+      throw new BadRequestError("Failed to update verification code.");
+    }
+    return updatedVerificationCode;
+  }
+
+  public async getVerificationCode(userId: string) {
+    return await this.verificationCodeRepository.findByUserId(userId);
+  }
+
   public async verifyVerificationCode(userId: string, code: string) {
     const verificationCode =
       await this.verificationCodeRepository.findByUserIdAndCode(
@@ -48,5 +87,16 @@ export class VerificationCodeService {
 
     await this.verificationCodeRepository.delete(userId, code);
     return { isValid: true };
+  }
+
+  public async restorePreviousCode(userId: string, code: string) {
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 10); //10 minutes
+
+    return await this.verificationCodeRepository.update({
+      userId,
+      code,
+      expiresAt: expirationTime,
+    });
   }
 }

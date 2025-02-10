@@ -31,6 +31,12 @@ export const registerLimiter = rateLimit({
   message: { message: "Too many account creation attempts, please wait." },
 });
 
+export const changePasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { message: "Too many password changes, please try again later." },
+});
+
 export const verifyCodeLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 5,

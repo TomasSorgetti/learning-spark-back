@@ -27,6 +27,27 @@ export class VerificationCodeRepositoryImpl
       code,
     });
   }
+  async findByUserId(userId: string): Promise<IVerificationCode | null> {
+    return await VerificationCodeModel.findOne({
+      userId,
+    });
+  }
+
+  async update(data: any): Promise<IVerificationCode | null> {
+    const updatedVerificationCode =
+      await VerificationCodeModel.findOneAndUpdate(
+        {
+          userId: data.userId,
+        },
+        {
+          code: data.code,
+          expiresAt: data.expiresAt,
+        },
+        { new: true }
+      );
+
+    return updatedVerificationCode;
+  }
 
   async delete(userId: string, code: string): Promise<void> {
     await VerificationCodeModel.deleteOne({ userId, code });

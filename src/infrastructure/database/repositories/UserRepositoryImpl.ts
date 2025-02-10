@@ -20,8 +20,20 @@ export class UserRepositoryImpl implements IUserRepository {
 
     return await newUser.save();
   }
+  
   async cancelCreate(userId: string): Promise<any> {
     return await UserModel.deleteOne({ _id: userId });
+  }
+
+  async changePassword(
+    userId: string,
+    hashedNewPassword: string
+  ): Promise<any> {
+    return await UserModel.findOneAndUpdate(
+      { _id: userId },
+      { password: hashedNewPassword },
+      { new: true }
+    );
   }
 
   async verifyUser(userId: string): Promise<any> {

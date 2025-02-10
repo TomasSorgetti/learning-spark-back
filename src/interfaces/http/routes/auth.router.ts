@@ -40,6 +40,12 @@ export class AuthRouter {
         this.authController.register(req, res, next);
       }
     );
+    this.router.patch(
+      "/resend-code",
+      (req: Request, res: Response, next: NextFunction) => {
+        this.authController.resendCode(req, res, next);
+      }
+    );
 
     this.router.patch(
       "/verify",

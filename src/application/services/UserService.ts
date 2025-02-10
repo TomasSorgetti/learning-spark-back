@@ -69,4 +69,8 @@ export class UserService {
   public async verifyUser(userId: string): Promise<any> {
     return await this.userRepository.verifyUser(userId);
   }
+
+  public async changePassword(userId: string, hashedNewPassword: string): Promise<any> {
+    return await this.userRepository.changePassword(userId, hashedNewPassword);
+  }
 }
