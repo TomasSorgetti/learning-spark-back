@@ -3,6 +3,9 @@ import { NextFunction, Request, Response, Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 import authenticateRefreshToken from "../../../infrastructure/middlewares/authenticateRefresh";
+import { CreateUserDTO } from "../../../application/dtos/CreateUserDTO";
+import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
+import { VerifyUserDTO } from "../../../application/dtos/VerifyUserDTO";
 
 export class AuthRouter {
   public router: Router;
@@ -24,6 +27,7 @@ export class AuthRouter {
 
     this.router.post(
       "/signup",
+      validateDTO(CreateUserDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.register(req, res, next);
       }
@@ -31,6 +35,7 @@ export class AuthRouter {
 
     this.router.patch(
       "/verify",
+      validateDTO(VerifyUserDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.verify(req, res, next);
       }

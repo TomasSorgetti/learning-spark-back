@@ -3,6 +3,8 @@ import { NextFunction, Request, Response, Router } from "express";
 import { PostController } from "../controllers/PostController";
 import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
+import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
+import { CreateorUpdatePostDTO } from "../../../application/dtos/CreateorUpdatePostDTO";
 
 export class PostRouter {
   public router: Router;
@@ -19,6 +21,7 @@ export class PostRouter {
       "/",
       authenticateToken,
       isAdminGuard,
+      validateDTO(CreateorUpdatePostDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.createPost(req, res, next);
       }
@@ -28,6 +31,7 @@ export class PostRouter {
       "/:_id",
       authenticateToken,
       isAdminGuard,
+      validateDTO(CreateorUpdatePostDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.updatePost(req, res, next);
       }

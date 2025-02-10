@@ -3,6 +3,8 @@ import { NextFunction, Request, Response, Router } from "express";
 import { RoleController } from "../controllers/RoleController";
 import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
+import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
+import { CreateorUpdateRoleDTO } from "../../../application/dtos/CreateorUpdateRoleDTO";
 
 export class RoleRouter {
   public router: Router;
@@ -19,6 +21,7 @@ export class RoleRouter {
       "/",
       authenticateToken,
       isAdminGuard,
+      validateDTO(CreateorUpdateRoleDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.roleController.createRole(req, res, next);
       }
@@ -27,6 +30,7 @@ export class RoleRouter {
       "/:_id",
       authenticateToken,
       isAdminGuard,
+      validateDTO(CreateorUpdateRoleDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.roleController.updateRole(req, res, next);
       }

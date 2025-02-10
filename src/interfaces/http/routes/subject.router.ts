@@ -3,6 +3,8 @@ import { NextFunction, Request, Response, Router } from "express";
 import { SubjectController } from "../controllers/SubjectController";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
+import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
+import { CreateorUpdateSubjectDTO } from "../../../application/dtos/CreateorUpdateSubjectDTO";
 
 export class SubjectRouter {
   public router: Router;
@@ -19,6 +21,7 @@ export class SubjectRouter {
       "/",
       authenticateToken,
       isAdminGuard,
+      validateDTO(CreateorUpdateSubjectDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.subjectController.createSubject(req, res, next);
       }
@@ -28,6 +31,7 @@ export class SubjectRouter {
       "/:_id",
       authenticateToken,
       isAdminGuard,
+      validateDTO(CreateorUpdateSubjectDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.subjectController.updateSubject(req, res, next);
       }
