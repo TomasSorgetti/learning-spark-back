@@ -3,6 +3,7 @@ import { MainRouter } from "./http/routes/main.router";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { limiter } from "../infrastructure/middlewares/rateLimiter";
 
 export class App {
   private app: Application;
@@ -25,6 +26,7 @@ export class App {
       })
     );
     this.app.use(cookieParser());
+    this.app.use(limiter);
   }
 
   private initializeRoutes() {

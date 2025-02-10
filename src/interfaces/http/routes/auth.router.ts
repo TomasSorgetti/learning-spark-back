@@ -6,6 +6,12 @@ import authenticateRefreshToken from "../../../infrastructure/middlewares/authen
 import { CreateUserDTO } from "../../../application/dtos/CreateUserDTO";
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import { VerifyUserDTO } from "../../../application/dtos/VerifyUserDTO";
+import {
+  loginLimiter,
+  refreshTokenLimiter,
+  registerLimiter,
+  verifyCodeLimiter,
+} from "../../../infrastructure/middlewares/rateLimiter";
 
 export class AuthRouter {
   public router: Router;
@@ -20,6 +26,7 @@ export class AuthRouter {
   private initializeRoutes(): void {
     this.router.post(
       "/signin",
+      loginLimiter,
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.login(req, res, next);
       }
@@ -27,6 +34,7 @@ export class AuthRouter {
 
     this.router.post(
       "/signup",
+      registerLimiter,
       validateDTO(CreateUserDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.register(req, res, next);
@@ -35,6 +43,7 @@ export class AuthRouter {
 
     this.router.patch(
       "/verify",
+      verifyCodeLimiter,
       validateDTO(VerifyUserDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.verify(req, res, next);
@@ -59,6 +68,7 @@ export class AuthRouter {
 
     this.router.get(
       "/refresh",
+      refreshTokenLimiter,
       authenticateRefreshToken,
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.refresh(req, res, next);
