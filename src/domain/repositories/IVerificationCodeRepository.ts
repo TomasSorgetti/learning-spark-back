@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IVerificationCode } from "../../infrastructure/database/models/VerificationCodeSchema";
+import { IVerificationCode } from "../../infrastructure/database/models/users/VerificationCodeSchema";
 
 export interface IVerificationCodeRepository {
   create(

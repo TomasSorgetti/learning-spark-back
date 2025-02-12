@@ -1,4 +1,4 @@
-import { IRole } from "../../infrastructure/database/models/RoleSchema";
+import { IRole } from "../../infrastructure/database/models/users/RoleSchema";
 
 export interface IRoleRepository {
   create(role: Partial<IRole>): Promise<IRole>;

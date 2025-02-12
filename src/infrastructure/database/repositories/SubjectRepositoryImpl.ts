@@ -1,4 +1,4 @@
-import { ISubject, SubjectModel } from "../models/SubjectSchema";
+import { ISubject, SubjectModel } from "../models/subjects/SubjectSchema";
 import { ISubjectRepository } from "../../../domain/repositories/ISubjectRepository";
 import { ConflictError } from "../../../shared/utils/app-errors";
 

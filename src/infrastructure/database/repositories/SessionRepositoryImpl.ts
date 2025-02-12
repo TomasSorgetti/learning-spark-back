@@ -1,5 +1,5 @@
 import mongoose, { Types } from "mongoose";
-import { ISession, SessionModel } from "../models/SessionSchema";
+import { ISession, SessionModel } from "../models/users/SessionSchema";
 import { ISessionRepository } from "../../../domain/repositories/ISesisonRepository";
 
 export class SessionRepositoryImpl implements ISessionRepository {

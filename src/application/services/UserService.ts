@@ -6,7 +6,7 @@ import {
   ConflictError,
   GoneError,
 } from "../../shared/utils/app-errors";
-import { IUser } from "../../infrastructure/database/models/UserSchema";
+import { IUser } from "../../infrastructure/database/models/users/UserSchema";
 import { SecurityService } from "../../infrastructure/services/SecurityService";
 import { IUserData } from "../interfaces/IUserService";
 
@@ -70,7 +70,10 @@ export class UserService {
     return await this.userRepository.verifyUser(userId);
   }
 
-  public async changePassword(userId: string, hashedNewPassword: string): Promise<any> {
+  public async changePassword(
+    userId: string,
+    hashedNewPassword: string
+  ): Promise<any> {
     return await this.userRepository.changePassword(userId, hashedNewPassword);
   }
 }

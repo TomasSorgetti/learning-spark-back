@@ -1,4 +1,4 @@
-import { ISession } from "../../infrastructure/database/models/SessionSchema";
+import { ISession } from "../../infrastructure/database/models/users/SessionSchema";
 
 export interface ISessionRepository {
   getAll(userId: string, sessionId: string): Promise<ISession[] | []>;

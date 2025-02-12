@@ -1,4 +1,4 @@
-import { ISubject } from "../../infrastructure/database/models/SubjectSchema";
+import { ISubject } from "../../infrastructure/database/models/subjects/SubjectSchema";
 
 export interface ISubjectRepository {
   create(subject: Partial<ISubject>): Promise<ISubject>;

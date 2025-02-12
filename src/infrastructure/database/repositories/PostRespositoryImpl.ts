@@ -1,4 +1,4 @@
-import { IPost, PostModel } from "../models/PostSchema";
+import { IPost, PostModel } from "../models/subjects/PostSchema";
 import { IPostRepository } from "../../../domain/repositories/IPostRepository";
 import { ConflictError } from "../../../shared/utils/app-errors";
 

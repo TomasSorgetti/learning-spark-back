@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { VerificationCodeRepositoryImpl } from "../../infrastructure/database/repositories/VerificationCodeImpl";
 import crypto from "crypto";
-import { IVerificationCode } from "../../infrastructure/database/models/VerificationCodeSchema";
+import { IVerificationCode } from "../../infrastructure/database/models/users/VerificationCodeSchema";
 import { BadRequestError } from "../../shared/utils/app-errors";
 
 export class VerificationCodeService {
@@ -56,7 +56,6 @@ export class VerificationCodeService {
         code: newCode,
         expiresAt: expirationTime,
       });
-      
 
     if (!updatedVerificationCode) {
       throw new BadRequestError("Failed to update verification code.");

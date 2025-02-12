@@ -1,6 +1,6 @@
 import { UserService } from "../services/UserService";
 import { EmailService } from "../../infrastructure/services/EmailService";
-import { IUser } from "../../infrastructure/database/models/UserSchema";
+import { IUser } from "../../infrastructure/database/models/users/UserSchema";
 import { APIError, UnavailableError } from "../../shared/utils/app-errors";
 import { VerificationCodeService } from "../services/VerificationCodeService";
 import mongoose from "mongoose";

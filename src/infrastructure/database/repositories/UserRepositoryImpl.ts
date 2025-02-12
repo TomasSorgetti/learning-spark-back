@@ -1,4 +1,4 @@
-import { IUser, UserModel } from "../models/UserSchema";
+import { IUser, UserModel } from "../models/users/UserSchema";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import mongoose from "mongoose";
 
@@ -20,7 +20,7 @@ export class UserRepositoryImpl implements IUserRepository {
 
     return await newUser.save();
   }
-  
+
   async cancelCreate(userId: string): Promise<any> {
     return await UserModel.deleteOne({ _id: userId });
   }

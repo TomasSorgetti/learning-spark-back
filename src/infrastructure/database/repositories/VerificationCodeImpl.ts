@@ -1,7 +1,7 @@
 import {
   IVerificationCode,
   VerificationCodeModel,
-} from "../models/VerificationCodeSchema";
+} from "../models/users/VerificationCodeSchema";
 import { IVerificationCodeRepository } from "../../../domain/repositories/IVerificationCodeRepository";
 import mongoose from "mongoose";
 

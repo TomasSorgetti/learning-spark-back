@@ -1,4 +1,4 @@
-import { IPost } from "../../infrastructure/database/models/PostSchema";
+import { IPost } from "../../infrastructure/database/models/subjects/PostSchema";
 
 export interface IPostRepository {
   create(subject: Partial<IPost>): Promise<IPost>;

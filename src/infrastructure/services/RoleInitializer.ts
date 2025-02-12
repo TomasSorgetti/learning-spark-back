@@ -1,4 +1,4 @@
-import { RoleModel } from "../../infrastructure/database/models/RoleSchema";
+import { RoleModel } from "../database/models/users/RoleSchema";
 
 export class RoleInitializer {
   static async initializeRoles() {

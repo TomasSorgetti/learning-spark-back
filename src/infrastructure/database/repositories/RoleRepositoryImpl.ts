@@ -1,4 +1,4 @@
-import { IRole, RoleModel } from "../models/RoleSchema";
+import { IRole, RoleModel } from "../models/users/RoleSchema";
 import { IRoleRepository } from "../../../domain/repositories/IRoleRepository";
 import { ConflictError } from "../../../shared/utils/app-errors";
 
