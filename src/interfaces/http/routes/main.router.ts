@@ -6,6 +6,7 @@ import { PostRouter } from "./post.router";
 import { SubjectRouter } from "./subject.router";
 import { RoleRouter } from "./role.router";
 import { SessionRouter } from "./session.router";
+import { SubSubjectRouter } from "./subSubject.router";
 
 export class MainRouter {
   public router: Router;
@@ -16,6 +17,7 @@ export class MainRouter {
   private subjectRouter: SubjectRouter;
   private roleRouter: RoleRouter;
   private sessionRouter: SessionRouter;
+  private subSubjectRouter: SubSubjectRouter;
 
   constructor() {
     this.router = Router();
@@ -24,6 +26,7 @@ export class MainRouter {
     this.productRouter = new ProductRouter();
     this.postRouter = new PostRouter();
     this.subjectRouter = new SubjectRouter();
+    this.subSubjectRouter = new SubSubjectRouter();
     this.roleRouter = new RoleRouter();
     this.sessionRouter = new SessionRouter();
 
@@ -37,10 +40,10 @@ export class MainRouter {
     this.router.use("/role", this.roleRouter.getRouter());
 
     this.router.use("/product", this.productRouter.getRouter());
-    // this.router.use("/category", categoryRouter.getRouter());
 
     this.router.use("/blog", this.postRouter.getRouter());
     this.router.use("/subject", this.subjectRouter.getRouter());
+    this.router.use("/sub-subject", this.subSubjectRouter.getRouter());
   }
 
   public getRouter() {

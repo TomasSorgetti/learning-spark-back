@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface ISubSubject extends Document {
   name: string;
+  description: string;
   subjectId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -10,6 +11,7 @@ export interface ISubSubject extends Document {
 const SubSubjectSchema: Schema = new Schema(
   {
     name: { type: String, required: true, unique: true },
+    description: { type: String, required: true },
     subjectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Subject",

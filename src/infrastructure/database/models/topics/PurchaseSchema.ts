@@ -1,26 +1,29 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-interface IPurchase extends mongoose.Document {
+export interface IPurchase extends Document {
   userId: mongoose.Types.ObjectId;
-  topicId: mongoose.Types.ObjectId;
+  subtopicId: mongoose.Types.ObjectId;
   purchaseDate: Date;
 }
 
-const PurchaseSchema = new mongoose.Schema<IPurchase>({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-    index: true,
+const PurchaseSchema: Schema = new Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
+    subtopicId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubTopic",
+      required: true,
+      index: true,
+    },
+    purchaseDate: { type: Date, required: true },
   },
-  topicId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Topic",
-    required: true,
-    index: true,
-  },
-  purchaseDate: { type: Date, required: true, default: Date.now },
-});
+  { timestamps: true }
+);
 
 export const PurchaseModel = mongoose.model<IPurchase>(
   "Purchase",

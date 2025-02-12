@@ -1,17 +1,18 @@
+// src/interfaces/http/routes/UserRoutes.ts
 import { NextFunction, Request, Response, Router } from "express";
-import { SubjectController } from "../controllers/SubjectController";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
-import { CreateorUpdateSubjectDTO } from "../../../application/dtos/CreateorUpdateSubjectDTO";
+import { CreateorUpdateSubSubjectDTO } from "../../../application/dtos/CreateorUpdateSubSubjectDTO";
+import { SubSubjectController } from "../controllers/SubSubjectController";
 
-export class SubjectRouter {
+export class SubSubjectRouter {
   public router: Router;
-  private subjectController: SubjectController;
+  private subSubjectController: SubSubjectController;
 
   constructor() {
     this.router = Router();
-    this.subjectController = new SubjectController();
+    this.subSubjectController = new SubSubjectController();
     this.initializeRoutes();
   }
 
@@ -20,9 +21,9 @@ export class SubjectRouter {
       "/",
       authenticateToken,
       isAdminGuard,
-      validateDTO(CreateorUpdateSubjectDTO),
+      validateDTO(CreateorUpdateSubSubjectDTO),
       (req: Request, res: Response, next: NextFunction) => {
-        this.subjectController.createSubject(req, res, next);
+        this.subSubjectController.createSubSubject(req, res, next);
       }
     );
 
@@ -30,9 +31,9 @@ export class SubjectRouter {
       "/:_id",
       authenticateToken,
       isAdminGuard,
-      validateDTO(CreateorUpdateSubjectDTO),
+      validateDTO(CreateorUpdateSubSubjectDTO),
       (req: Request, res: Response, next: NextFunction) => {
-        this.subjectController.updateSubject(req, res, next);
+        this.subSubjectController.updateSubSubject(req, res, next);
       }
     );
 
@@ -41,19 +42,19 @@ export class SubjectRouter {
       authenticateToken,
       isAdminGuard,
       (req: Request, res: Response, next: NextFunction) => {
-        this.subjectController.deleteSubject(req, res, next);
+        this.subSubjectController.deleteSubSubject(req, res, next);
       }
     );
 
     this.router.get(
       "/:_id",
       (req: Request, res: Response, next: NextFunction) => {
-        this.subjectController.getSubject(req, res, next);
+        this.subSubjectController.getSubSubject(req, res, next);
       }
     );
 
     this.router.get("/", (req: Request, res: Response, next: NextFunction) => {
-      this.subjectController.getAllSubjects(req, res, next);
+      this.subSubjectController.getAllSubSubjects(req, res, next);
     });
   }
 
