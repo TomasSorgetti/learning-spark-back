@@ -1,29 +1,23 @@
-import { UserService } from "../services/UserService";
-import { EmailService } from "../../infrastructure/services/EmailService";
-import { IUser } from "../../infrastructure/database/models/users/UserSchema";
-import { APIError, UnavailableError } from "../../shared/utils/app-errors";
-import { VerificationCodeService } from "../services/VerificationCodeService";
+import { UserService } from "../../services/UserService";
+import { EmailService } from "../../../infrastructure/services/EmailService";
+import { IUser } from "../../../infrastructure/database/models/users/UserSchema";
+import { APIError, UnavailableError } from "../../../shared/utils/app-errors";
+import { VerificationCodeService } from "../../services/VerificationCodeService";
 import mongoose from "mongoose";
-import { serverConfig } from "../../infrastructure/config";
-import { RoleService } from "../services/RoleService";
-import { IRegisterUser } from "../interfaces/IAuthService";
-import { CookieService } from "../../infrastructure/services/CookieService";
+import { serverConfig } from "../../../infrastructure/config";
+import { RoleService } from "../../services/RoleService";
+import { IRegisterUser } from "../../interfaces/IAuthService";
+import { CookieService } from "../../../infrastructure/services/CookieService";
 import { Response } from "express";
 
 export class RegisterUserUseCase {
-  private roleService: RoleService;
-  private userService: UserService;
-  private emailService: EmailService;
-  private verificationCodeService: VerificationCodeService;
-  private cookieService: CookieService;
-
-  constructor() {
-    this.roleService = new RoleService();
-    this.userService = new UserService();
-    this.emailService = new EmailService();
-    this.verificationCodeService = new VerificationCodeService();
-    this.cookieService = new CookieService();
-  }
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly userService: UserService,
+    private readonly emailService: EmailService,
+    private readonly verificationCodeService: VerificationCodeService,
+    private readonly cookieService: CookieService
+  ) {}
 
   async execute(
     res: Response,

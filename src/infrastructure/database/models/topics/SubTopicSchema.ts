@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ISubTopic extends Document {
   name: string;
   topicId: mongoose.Types.ObjectId;
+  price: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,7 @@ const SubTopicSchema: Schema = new Schema(
       ref: "Topic",
       required: true,
     },
+    price: { type: Number, required: true },
   },
   { timestamps: true }
 );

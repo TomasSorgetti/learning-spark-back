@@ -1,4 +1,3 @@
-// src/interfaces/http/routes/UserRoutes.ts
 import { NextFunction, Request, Response, Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
@@ -12,6 +11,7 @@ import {
   registerLimiter,
   verifyCodeLimiter,
 } from "../../../infrastructure/middlewares/rateLimiter";
+import { container } from "../../../infrastructure/di/container";
 
 export class AuthRouter {
   public router: Router;
@@ -19,7 +19,15 @@ export class AuthRouter {
 
   constructor() {
     this.router = Router();
-    this.authController = new AuthController();
+    this.authController = new AuthController(
+      container.registerUserUseCase,
+      container.loginUseCase,
+      container.verifyUserUseCase,
+      container.logoutUseCase,
+      container.profileUseCase,
+      container.refreshUseCase,
+      container.resendCodeUseCase
+    );
     this.initializeRoutes();
   }
 
@@ -40,6 +48,7 @@ export class AuthRouter {
         this.authController.register(req, res, next);
       }
     );
+    
     this.router.patch(
       "/resend-code",
       (req: Request, res: Response, next: NextFunction) => {

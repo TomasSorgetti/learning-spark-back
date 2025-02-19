@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../../../application/services/UserService";
-import { ChangePasswordUseCase } from "../../../application/use-cases/ChangePasswordUseCase";
+import { ChangePasswordUseCase } from "../../../application/use-cases/user/ChangePasswordUseCase";
 
 interface CustomRequest extends Request {
   userId?: string;

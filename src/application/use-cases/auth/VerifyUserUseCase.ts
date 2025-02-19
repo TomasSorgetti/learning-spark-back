@@ -1,18 +1,14 @@
-import { EmailService } from "../../infrastructure/services/EmailService";
-import { BadRequestError } from "../../shared/utils/app-errors";
-import { UserService } from "../services/UserService";
-import { VerificationCodeService } from "../services/VerificationCodeService";
+import { BadRequestError } from "../../../shared/utils/app-errors";
+import { EmailService } from "../../../infrastructure/services/EmailService";
+import { UserService } from "../../services/UserService";
+import { VerificationCodeService } from "../../services/VerificationCodeService";
 
 export class VerifyUserUseCase {
-  private verificationCodeService: VerificationCodeService;
-  private userService: UserService;
-  private emailService: EmailService;
-
-  constructor() {
-    this.verificationCodeService = new VerificationCodeService();
-    this.userService = new UserService();
-    this.emailService = new EmailService();
-  }
+  constructor(
+    private readonly verificationCodeService: VerificationCodeService,
+    private readonly userService: UserService,
+    private readonly emailService: EmailService
+  ) {}
 
   public async execute(userId: string, code: string): Promise<any> {
     if (!userId || !code) {

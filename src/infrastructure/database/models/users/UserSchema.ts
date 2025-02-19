@@ -7,6 +7,12 @@ export interface IUser extends Document {
   roles: mongoose.Types.ObjectId[];
   validated: boolean;
   deleted: boolean;
+  loginAttempts: number;
+  lockUntil: Date | null;
+  purchasedSubTopics: {
+    subTopicId: mongoose.Types.ObjectId;
+    purchasedAt: Date;
+  }[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,8 +29,13 @@ const UserSchema: Schema = new Schema(
         required: true,
       },
     ],
-    validated: { type: Boolean, default: false },
+    emailVerified: { type: Boolean, default: false },
     deleted: { type: Boolean, default: false },
+    loginAttempts: { type: Number, required: true, default: 0 },
+    lockUntil: { type: Date, default: null },
+    purchasedSubTopics: [
+      { subTopicId: mongoose.Types.ObjectId, purchasedAt: Date },
+    ],
   },
   {
     timestamps: true,

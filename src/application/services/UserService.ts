@@ -59,15 +59,25 @@ export class UserService {
   public async getUserByEmail(email: string): Promise<any> {
     return await this.userRepository.findByEmail(email);
   }
+
   public async getUserById(userId: string): Promise<any> {
     return await this.userRepository.findById(userId);
   }
+
   public async getAllUsers(): Promise<any[]> {
     return await this.userRepository.findAll();
   }
 
   public async verifyUser(userId: string): Promise<any> {
     return await this.userRepository.verifyUser(userId);
+  }
+
+  public async updateLoginAttempts(userId: string, attempts: number): Promise<any> {
+    return await this.userRepository.updateLoginAttempts(userId, attempts);
+  }
+
+  public async updateLockUntil(userId: string, lockUntil: Date | null): Promise<any> {
+    return await this.userRepository.updateLockUntil(userId, lockUntil);
   }
 
   public async changePassword(

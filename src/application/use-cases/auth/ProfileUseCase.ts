@@ -1,12 +1,8 @@
-import { BadRequestError } from "../../shared/utils/app-errors";
-import { UserService } from "../services/UserService";
+import { BadRequestError } from "../../../shared/utils/app-errors";
+import { UserService } from "../../services/UserService";
 
 export class ProfileUseCase {
-  private userService: UserService;
-
-  constructor() {
-    this.userService = new UserService();
-  }
+  constructor(private readonly userService: UserService) {}
 
   public async execute(userId: string): Promise<any> {
     if (!userId) {

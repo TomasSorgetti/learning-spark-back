@@ -6,4 +6,10 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<IUser | null>;
   create(user: Partial<IUser>, session: mongoose.ClientSession): Promise<IUser>;
   verifyUser(userId: string): Promise<IUser>;
+  updateLoginAttempts(userId: string, attempts: number): Promise<any>;
+  updateLockUntil(userId: string, lockUntil: Date | null): Promise<any>;
+  changePassword(
+    userId: string,
+    hashedNewPassword: string
+  ): Promise<IUser | null>;
 }

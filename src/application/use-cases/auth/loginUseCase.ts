@@ -1,30 +1,25 @@
-import { UserService } from "../services/UserService";
-import { ILoginUser } from "../interfaces/IAuthService";
-import { SecurityService } from "../../infrastructure/services/SecurityService";
+import { Response } from "express";
 import {
   NotFoundError,
   GoneError,
   UnauthorizedError,
-} from "../../shared/utils/app-errors";
-import { TokenService } from "../../infrastructure/services/TokenService";
-import { SessionService } from "../services/SessionService";
-import { Response } from "express";
-import { CookieService } from "../../infrastructure/services/CookieService";
+} from "../../../shared/utils/app-errors";
+
+import { UserService } from "../../services/UserService";
+import { ILoginUser } from "../../interfaces/IAuthService";
+import { SecurityService } from "../../../infrastructure/services/SecurityService";
+import { TokenService } from "../../../infrastructure/services/TokenService";
+import { SessionService } from "../../services/SessionService";
+import { CookieService } from "../../../infrastructure/services/CookieService";
 
 export class LoginUseCase {
-  private userService: UserService;
-  private securityService: SecurityService;
-  private tokenService: TokenService;
-  private sessionService: SessionService;
-  private cookieService: CookieService;
-
-  constructor() {
-    this.userService = new UserService();
-    this.securityService = new SecurityService();
-    this.tokenService = new TokenService();
-    this.sessionService = new SessionService();
-    this.cookieService = new CookieService();
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly securityService: SecurityService,
+    private readonly tokenService: TokenService,
+    private readonly sessionService: SessionService,
+    private readonly cookieService: CookieService
+  ) {}
 
   public async execute(
     res: Response,
@@ -39,14 +34,41 @@ export class LoginUseCase {
     if (existingUser && existingUser.deleted) {
       throw new GoneError("User deleted");
     }
+    if (existingUser && !existingUser.emailVerified) {
+      throw new UnauthorizedError("User not verified");
+    }
+    if (
+      existingUser &&
+      existingUser.lockUntil &&
+      existingUser.lockUntil > new Date()
+    ) {
+      throw new UnauthorizedError("User is locked");
+    }
+    if (existingUser.loginAttempts >= 8) {
+      await this.userService.updateLockUntil(
+        existingUser._id,
+        new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
+      );
+      await this.userService.updateLoginAttempts(existingUser._id, 0);
+      throw new UnauthorizedError(
+        "User blocked. Too many login attempts, try again later."
+      );
+    }
 
     const isPasswordValid = await this.securityService.comparePasswords(
       userData.password,
       existingUser.password
     );
     if (!isPasswordValid) {
+      await this.userService.updateLoginAttempts(
+        existingUser._id,
+        existingUser.loginAttempts + 1 || 1
+      );
       throw new UnauthorizedError("Incorrect password");
     }
+
+    await this.userService.updateLoginAttempts(existingUser._id, 0);
+    await this.userService.updateLockUntil(existingUser._id, null);
 
     // create access & refresh token
     const accessToken = this.tokenService.generateAccessToken(

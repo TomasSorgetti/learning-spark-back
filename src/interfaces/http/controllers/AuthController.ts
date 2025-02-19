@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { validateUserData } from "../../../shared/validators/userValidator";
-import { LoginUseCase } from "../../../application/use-cases/loginUseCase";
-import { RegisterUserUseCase } from "../../../application/use-cases/RegisterUserUseCase";
-import { VerifyUserUseCase } from "../../../application/use-cases/VerifyUserUseCase";
-import { LogoutUseCase } from "../../../application/use-cases/LogoutUseCase";
-import { ProfileUseCase } from "../../../application/use-cases/ProfileUseCase";
-import { RefreshUseCase } from "../../../application/use-cases/refreshUseCase";
-import { ResendCodeUseCase } from "../../../application/use-cases/ResendCodeUseCase";
+import { LoginUseCase } from "../../../application/use-cases/auth/loginUseCase";
+import { VerifyUserUseCase } from "../../../application/use-cases/auth/VerifyUserUseCase";
+import { LogoutUseCase } from "../../../application/use-cases/auth/LogoutUseCase";
+import { ProfileUseCase } from "../../../application/use-cases/auth/ProfileUseCase";
+import { RefreshUseCase } from "../../../application/use-cases/auth/refreshUseCase";
+import { ResendCodeUseCase } from "../../../application/use-cases/auth/ResendCodeUseCase";
+import { RegisterUserUseCase } from "../../../application/use-cases/auth/RegisterUserUseCase";
 
 interface CustomRequest extends Request {
   userId?: string;
@@ -14,23 +14,15 @@ interface CustomRequest extends Request {
 }
 
 export class AuthController {
-  private loginUseCase: LoginUseCase;
-  private registerUserUseCase: RegisterUserUseCase;
-  private verifyUserUseCase: VerifyUserUseCase;
-  private logoutUseCase: LogoutUseCase;
-  private profileUseCase: ProfileUseCase;
-  private refreshUseCase: RefreshUseCase;
-  private resendCodeUseCase: ResendCodeUseCase;
-
-  constructor() {
-    this.loginUseCase = new LoginUseCase();
-    this.registerUserUseCase = new RegisterUserUseCase();
-    this.verifyUserUseCase = new VerifyUserUseCase();
-    this.logoutUseCase = new LogoutUseCase();
-    this.profileUseCase = new ProfileUseCase();
-    this.refreshUseCase = new RefreshUseCase();
-    this.resendCodeUseCase = new ResendCodeUseCase();
-  }
+  constructor(
+    private readonly registerUserUseCase: RegisterUserUseCase,
+    private readonly loginUseCase: LoginUseCase,
+    private readonly verifyUserUseCase: VerifyUserUseCase,
+    private readonly logoutUseCase: LogoutUseCase,
+    private readonly profileUseCase: ProfileUseCase,
+    private readonly refreshUseCase: RefreshUseCase,
+    private readonly resendCodeUseCase: ResendCodeUseCase
+  ) {}
 
   public async register(req: Request, res: Response, next: NextFunction) {
     try {
@@ -52,7 +44,7 @@ export class AuthController {
   public async resendCode(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.body;
-      
+
       const response = await this.resendCodeUseCase.execute(res, userId);
       return res.status(200).json(response);
     } catch (error: any) {

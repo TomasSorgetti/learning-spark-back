@@ -1,7 +1,7 @@
-import { EmailService } from "../../infrastructure/services/EmailService";
-import { SecurityService } from "../../infrastructure/services/SecurityService";
-import { APIError, BadRequestError } from "../../shared/utils/app-errors";
-import { UserService } from "../services/UserService";
+import { EmailService } from "../../../infrastructure/services/EmailService";
+import { SecurityService } from "../../../infrastructure/services/SecurityService";
+import { APIError, BadRequestError } from "../../../shared/utils/app-errors";
+import { UserService } from "../../services/UserService";
 
 export class ChangePasswordUseCase {
   private userService: UserService;

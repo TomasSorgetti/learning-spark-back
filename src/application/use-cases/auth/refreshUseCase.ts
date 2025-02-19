@@ -1,19 +1,15 @@
 import { Response } from "express";
-import { CookieService } from "../../infrastructure/services/CookieService";
-import { TokenService } from "../../infrastructure/services/TokenService";
-import { BadRequestError } from "../../shared/utils/app-errors";
-import { UserService } from "../services/UserService";
+import { CookieService } from "../../../infrastructure/services/CookieService";
+import { TokenService } from "../../../infrastructure/services/TokenService";
+import { BadRequestError } from "../../../shared/utils/app-errors";
+import { UserService } from "../../services/UserService";
 
 export class RefreshUseCase {
-  private userService: UserService;
-  private cookieService: CookieService;
-  private tokenService: TokenService;
-
-  constructor() {
-    this.userService = new UserService();
-    this.cookieService = new CookieService();
-    this.tokenService = new TokenService();
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly cookieService: CookieService,
+    private readonly tokenService: TokenService
+  ) {}
 
   public async execute(
     rememberme: boolean,

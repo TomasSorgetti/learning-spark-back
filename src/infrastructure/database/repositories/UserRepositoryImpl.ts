@@ -1,6 +1,5 @@
 import { IUser, UserModel } from "../models/users/UserSchema";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import mongoose from "mongoose";
 
 export class UserRepositoryImpl implements IUserRepository {
   async findById(id: string): Promise<IUser | null> {
@@ -25,6 +24,22 @@ export class UserRepositoryImpl implements IUserRepository {
     return await UserModel.deleteOne({ _id: userId });
   }
 
+  async updateLoginAttempts(userId: string, attempts: number): Promise<any> {
+    return await UserModel.findOneAndUpdate(
+      { _id: userId },
+      { loginAttempts: attempts },
+      { new: true }
+    );
+  }
+
+  async updateLockUntil(userId: string, lockUntil: Date | null): Promise<any> {
+    return await UserModel.findOneAndUpdate(
+      { _id: userId },
+      { lockUntil },
+      { new: true }
+    );
+  }
+
   async changePassword(
     userId: string,
     hashedNewPassword: string
@@ -39,7 +54,7 @@ export class UserRepositoryImpl implements IUserRepository {
   async verifyUser(userId: string): Promise<any> {
     return await UserModel.findOneAndUpdate(
       { _id: userId },
-      { validated: true },
+      { emailVerified: true },
       { new: true }
     );
   }
