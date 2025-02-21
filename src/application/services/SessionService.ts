@@ -1,10 +1,7 @@
 import { SessionRepositoryImpl } from "../../infrastructure/database/repositories/SessionRepositoryImpl";
 
 export class SessionService {
-  private sessionRepository: SessionRepositoryImpl;
-  constructor() {
-    this.sessionRepository = new SessionRepositoryImpl();
-  }
+  constructor(private readonly sessionRepository: SessionRepositoryImpl) {}
 
   public async getAllSession(userId: string, sessionId: string): Promise<any> {
     const allSessions = await this.sessionRepository.getAll(userId, sessionId);

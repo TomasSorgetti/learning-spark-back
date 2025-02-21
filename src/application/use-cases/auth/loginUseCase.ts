@@ -6,7 +6,7 @@ import {
 } from "../../../shared/utils/app-errors";
 
 import { UserService } from "../../services/UserService";
-import { ILoginUser } from "../../interfaces/IAuthService";
+import { ILoginUser } from "../../types/IAuthService";
 import { SecurityService } from "../../../infrastructure/services/SecurityService";
 import { TokenService } from "../../../infrastructure/services/TokenService";
 import { SessionService } from "../../services/SessionService";

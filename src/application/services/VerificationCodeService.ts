@@ -5,10 +5,9 @@ import { IVerificationCode } from "../../infrastructure/database/models/users/Ve
 import { BadRequestError } from "../../shared/utils/app-errors";
 
 export class VerificationCodeService {
-  private verificationCodeRepository: VerificationCodeRepositoryImpl;
-  constructor() {
-    this.verificationCodeRepository = new VerificationCodeRepositoryImpl();
-  }
+  constructor(
+    private readonly verificationCodeRepository: VerificationCodeRepositoryImpl
+  ) {}
 
   public async createVerificationCode(
     userId: string,

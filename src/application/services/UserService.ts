@@ -8,15 +8,13 @@ import {
 } from "../../shared/utils/app-errors";
 import { IUser } from "../../infrastructure/database/models/users/UserSchema";
 import { SecurityService } from "../../infrastructure/services/SecurityService";
-import { IUserData } from "../interfaces/IUserService";
+import { IUserData } from "../types/IUserService";
 
 export class UserService {
-  private securityService: SecurityService;
-  private userRepository: UserRepositoryImpl;
-  constructor() {
-    this.securityService = new SecurityService();
-    this.userRepository = new UserRepositoryImpl();
-  }
+  constructor(
+    private readonly securityService: SecurityService,
+    private readonly userRepository: UserRepositoryImpl
+  ) {}
 
   public async createUser(userData: IUserData): Promise<IUser> {
     const existingUser = await this.userRepository.findByEmail(userData.email);
@@ -72,11 +70,17 @@ export class UserService {
     return await this.userRepository.verifyUser(userId);
   }
 
-  public async updateLoginAttempts(userId: string, attempts: number): Promise<any> {
+  public async updateLoginAttempts(
+    userId: string,
+    attempts: number
+  ): Promise<any> {
     return await this.userRepository.updateLoginAttempts(userId, attempts);
   }
 
-  public async updateLockUntil(userId: string, lockUntil: Date | null): Promise<any> {
+  public async updateLockUntil(
+    userId: string,
+    lockUntil: Date | null
+  ): Promise<any> {
     return await this.userRepository.updateLockUntil(userId, lockUntil);
   }
 

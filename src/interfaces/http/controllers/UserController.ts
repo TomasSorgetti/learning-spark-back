@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { UserService } from "../../../application/services/UserService";
 import { ChangePasswordUseCase } from "../../../application/use-cases/user/ChangePasswordUseCase";
+import { GetAllUsersUseCase } from "../../../application/use-cases/user/GetAllUsersUseCase";
 
 interface CustomRequest extends Request {
   userId?: string;
@@ -8,17 +8,14 @@ interface CustomRequest extends Request {
 }
 
 export class UserController {
-  private userService: UserService;
-  private changePasswordUseCase: ChangePasswordUseCase;
-
-  constructor() {
-    this.userService = new UserService();
-    this.changePasswordUseCase = new ChangePasswordUseCase();
-  }
+  constructor(
+    private readonly changePasswordUseCase: ChangePasswordUseCase,
+    private readonly getAllUsersUseCase: GetAllUsersUseCase
+  ) {}
 
   public async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await this.userService.getAllUsers();
+      const response = await this.getAllUsersUseCase.execute();
       return res.status(201).json(response);
     } catch (error: any) {
       next(error);

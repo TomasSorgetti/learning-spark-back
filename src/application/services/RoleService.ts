@@ -2,10 +2,7 @@ import { RoleRepositoryImpl } from "../../infrastructure/database/repositories/R
 import { RedisCache } from "../../infrastructure/redis/RedisCache";
 
 export class RoleService {
-  private roleRepository: RoleRepositoryImpl;
-  constructor() {
-    this.roleRepository = new RoleRepositoryImpl();
-  }
+  constructor(private readonly roleRepository: RoleRepositoryImpl) {}
 
   public async createRole(name: string): Promise<any> {
     await RedisCache.delete("roles");

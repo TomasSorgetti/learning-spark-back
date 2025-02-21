@@ -5,6 +5,7 @@ import authenticateToken from "../../../infrastructure/middlewares/authenticateT
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import { UpdatePasswordDTO } from "../../../application/dtos/UpdatePasswordDTO";
 import { changePasswordLimiter } from "../../../infrastructure/middlewares/rateLimiter";
+import { container } from "../../../infrastructure/di/container";
 
 export class UserRouter {
   public router: Router;
@@ -12,7 +13,7 @@ export class UserRouter {
 
   constructor() {
     this.router = Router();
-    this.userController = new UserController();
+    this.userController = new UserController(container.changePasswordUseCase, container.getAllUsersUseCase);
     this.initializeRoutes();
   }
 

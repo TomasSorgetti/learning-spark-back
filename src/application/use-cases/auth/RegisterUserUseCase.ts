@@ -6,7 +6,7 @@ import { VerificationCodeService } from "../../services/VerificationCodeService"
 import mongoose from "mongoose";
 import { serverConfig } from "../../../infrastructure/config";
 import { RoleService } from "../../services/RoleService";
-import { IRegisterUser } from "../../interfaces/IAuthService";
+import { IRegisterUser } from "../../types/IAuthService";
 import { CookieService } from "../../../infrastructure/services/CookieService";
 import { Response } from "express";
 

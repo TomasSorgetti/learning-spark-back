@@ -4,15 +4,11 @@ import { APIError, BadRequestError } from "../../../shared/utils/app-errors";
 import { UserService } from "../../services/UserService";
 
 export class ChangePasswordUseCase {
-  private userService: UserService;
-  private emailService: EmailService;
-  private securityService: SecurityService;
-
-  constructor() {
-    this.userService = new UserService();
-    this.emailService = new EmailService();
-    this.securityService = new SecurityService();
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly emailService: EmailService,
+    private readonly securityService: SecurityService
+  ) {}
 
   public async execute(
     userId: string,

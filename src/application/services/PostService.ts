@@ -1,6 +1,6 @@
 import { PostRepositoryImpl } from "../../infrastructure/database/repositories/PostRespositoryImpl";
 import { RedisCache } from "../../infrastructure/redis/RedisCache";
-import { IPost } from "../interfaces/IPostService";
+import { IPost } from "../types/IPostService";
 
 export class PostService {
   private postRepository: PostRepositoryImpl;
