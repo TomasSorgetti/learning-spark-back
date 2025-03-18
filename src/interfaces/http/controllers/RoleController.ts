@@ -2,10 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { RoleService } from "../../../application/services/RoleService";
 
 export class RoleController {
-  private roleService: RoleService;
 
-  constructor() {
-    this.roleService = new RoleService();
+  constructor(private readonly roleService: RoleService) {
   }
 
   public async createRole(req: Request, res: Response, next: NextFunction) {

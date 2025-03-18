@@ -5,6 +5,7 @@ import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import { CategoryController } from "../controllers/CategoryController";
 import { CreateorUpdateCategoryDTO } from "../../../application/dtos/CreateorUpdateCategoryDTO";
+import { container } from "../../../infrastructure/di/container";
 
 export class CategoryRouter {
   public router: Router;
@@ -12,7 +13,7 @@ export class CategoryRouter {
 
   constructor() {
     this.router = Router();
-    this.categoryController = new CategoryController();
+    this.categoryController = new CategoryController(container.categoryService);
     this.initializeRoutes();
   }
 

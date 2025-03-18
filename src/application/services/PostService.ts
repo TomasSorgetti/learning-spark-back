@@ -3,10 +3,7 @@ import { RedisCache } from "../../infrastructure/redis/RedisCache";
 import { IPost } from "../types/IPostService";
 
 export class PostService {
-  private postRepository: PostRepositoryImpl;
-  constructor() {
-    this.postRepository = new PostRepositoryImpl();
-  }
+  constructor(private readonly postRepository: PostRepositoryImpl) {}
 
   public async createPost(postData: IPost): Promise<any> {
     await RedisCache.delete("posts");

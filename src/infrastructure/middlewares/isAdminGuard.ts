@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { UnauthorizedError } from "../../shared/utils/app-errors";
-import { UserService } from "../../application/services/UserService";
+import { container } from "../di/container";
 
 interface CustomRequest extends Request {
   userId?: string;
   sessionId?: string;
 }
-const userService = new UserService();
 
 const isAdminGuard = async (
   req: CustomRequest,
@@ -20,7 +19,7 @@ const isAdminGuard = async (
       throw new UnauthorizedError("No user id provided");
     }
 
-    const user = await userService.getUserById(userId);
+    const user = await container.userService.getUserById(userId);
     if (!user) {
       throw new UnauthorizedError("User not found");
     }

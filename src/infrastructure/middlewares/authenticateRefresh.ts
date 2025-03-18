@@ -2,14 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { UnauthorizedError } from "../../shared/utils/app-errors";
 import { TokenService } from "../services/TokenService";
 import { SessionService } from "../../application/services/SessionService";
-
-interface CustomRequest extends Request {
-  userId?: string;
-  sessionId?: string;
-}
-
-const tokenService = new TokenService();
-const sessionService = new SessionService();
+import { CustomRequest } from "./types/request";
+import { container } from "../di/container";
 
 const authenticateRefreshToken = async (
   req: CustomRequest,
@@ -28,7 +22,7 @@ const authenticateRefreshToken = async (
       throw new UnauthorizedError("No refresh token provided");
     }
 
-    const session = await sessionService.getSession(sessionId);
+    const session = await container.sessionService.getSession(sessionId);
 
     if (!session) {
       throw new UnauthorizedError("Session not found");
@@ -36,7 +30,9 @@ const authenticateRefreshToken = async (
     if (session && session.deleted) {
       throw new UnauthorizedError("Session deleted");
     }
-    const decoded = tokenService.verifyRefreshToken(token) as { sub: string };
+    const decoded = container.tokenService.verifyRefreshToken(token) as {
+      sub: string;
+    };
 
     if (!decoded || !decoded.sub) {
       throw new UnauthorizedError("Invalid refresh token");

@@ -2,10 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { CategoryService } from "../../../application/services/CategoryService";
 
 export class CategoryController {
-  private categoryService: CategoryService;
 
-  constructor() {
-    this.categoryService = new CategoryService();
+  constructor(
+    private readonly categoryService: CategoryService) {
   }
 
   public async getAllCategories(

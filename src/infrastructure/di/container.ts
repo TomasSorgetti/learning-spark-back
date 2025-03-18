@@ -24,12 +24,22 @@ import { RegisterUserUseCase } from "../../application/use-cases/auth/RegisterUs
 import { ResendCodeUseCase } from "../../application/use-cases/auth/ResendCodeUseCase";
 import { VerifyUserUseCase } from "../../application/use-cases/auth/VerifyUserUseCase";
 import { ProfileUseCase } from "../../application/use-cases/auth/ProfileUseCase";
+import { CategoryService } from "../../application/services/CategoryService";
+import { PostService } from "../../application/services/PostService";
+import { PostRepositoryImpl } from "../database/repositories/PostRespositoryImpl";
+import { SubjectService } from "../../application/services/SubjectService";
+import { SubjectRepositoryImpl } from "../database/repositories/SubjectRepositoryImpl";
+import { SubSubjectService } from "../../application/services/SubSubjectService";
+import { SubSubjectRepositoryImpl } from "../database/repositories/SubSubjectRepositoryImpl";
 
 // Repository instances
 const userRepository = new UserRepositoryImpl();
 const verificationCodeRepository = new VerificationCodeRepositoryImpl();
 const roleRepository = new RoleRepositoryImpl();
 const sessionRepository = new SessionRepositoryImpl();
+const postRepository = new PostRepositoryImpl();
+const subjectRepository = new SubjectRepositoryImpl();
+const subSubjectRepository = new SubSubjectRepositoryImpl();
 
 // Service instances
 const roleService = new RoleService(roleRepository);
@@ -42,6 +52,10 @@ const securityService = new SecurityService();
 const tokenService = new TokenService();
 const sessionService = new SessionService(sessionRepository);
 const userService = new UserService(securityService, userRepository);
+const categoryService = new CategoryService();
+const postService = new PostService(postRepository);
+const subjectService = new SubjectService(subjectRepository);
+const subSubjectService = new SubSubjectService(subSubjectRepository);
 
 // Auth Use Cases
 const registerUserUseCase = new RegisterUserUseCase(
@@ -86,6 +100,14 @@ const changePasswordUseCase = new ChangePasswordUseCase(
 const getAllUsersUseCase = new GetAllUsersUseCase(userService);
 
 export const container = {
+  userService,
+  sessionService,
+  tokenService,
+  roleService,
+  categoryService,
+  postService,
+  subjectService,
+  subSubjectService,
   registerUserUseCase,
   loginUseCase,
   verifyUserUseCase,

@@ -5,6 +5,7 @@ import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import { CreateorUpdateSubSubjectDTO } from "../../../application/dtos/CreateorUpdateSubSubjectDTO";
 import { SubSubjectController } from "../controllers/SubSubjectController";
+import { container } from "../../../infrastructure/di/container";
 
 export class SubSubjectRouter {
   public router: Router;
@@ -12,7 +13,7 @@ export class SubSubjectRouter {
 
   constructor() {
     this.router = Router();
-    this.subSubjectController = new SubSubjectController();
+    this.subSubjectController = new SubSubjectController(container.subSubjectService);
     this.initializeRoutes();
   }
 

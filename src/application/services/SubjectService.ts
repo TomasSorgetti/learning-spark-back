@@ -2,10 +2,7 @@ import { SubjectRepositoryImpl } from "../../infrastructure/database/repositorie
 import { RedisCache } from "../../infrastructure/redis/RedisCache";
 
 export class SubjectService {
-  private subjectRepository: SubjectRepositoryImpl;
-  constructor() {
-    this.subjectRepository = new SubjectRepositoryImpl();
-  }
+  constructor(private readonly subjectRepository: SubjectRepositoryImpl) {}
 
   public async createSubject(name: string): Promise<any> {
     await RedisCache.delete("subjects");

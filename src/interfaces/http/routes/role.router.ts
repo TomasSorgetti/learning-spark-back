@@ -5,6 +5,7 @@ import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import { CreateorUpdateRoleDTO } from "../../../application/dtos/CreateorUpdateRoleDTO";
+import { container } from "../../../infrastructure/di/container";
 
 export class RoleRouter {
   public router: Router;
@@ -12,7 +13,7 @@ export class RoleRouter {
 
   constructor() {
     this.router = Router();
-    this.roleController = new RoleController();
+    this.roleController = new RoleController(container.roleService);
     this.initializeRoutes();
   }
 

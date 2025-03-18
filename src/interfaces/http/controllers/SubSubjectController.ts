@@ -2,11 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { SubSubjectService } from "../../../application/services/SubSubjectService";
 
 export class SubSubjectController {
-  private subSubjectService: SubSubjectService;
-
-  constructor() {
-    this.subSubjectService = new SubSubjectService();
-  }
+  constructor(private readonly subSubjectService: SubSubjectService) {}
 
   public async createSubSubject(
     req: Request,

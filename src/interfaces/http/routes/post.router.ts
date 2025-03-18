@@ -5,6 +5,7 @@ import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import { CreateorUpdatePostDTO } from "../../../application/dtos/CreateorUpdatePostDTO";
+import { container } from "../../../infrastructure/di/container";
 
 export class PostRouter {
   public router: Router;
@@ -12,7 +13,7 @@ export class PostRouter {
 
   constructor() {
     this.router = Router();
-    this.postController = new PostController();
+    this.postController = new PostController(container.postService);
     this.initializeRoutes();
   }
 

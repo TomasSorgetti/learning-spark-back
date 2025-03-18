@@ -2,11 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { PostService } from "../../../application/services/PostService";
 
 export class PostController {
-  private postService: PostService;
-
-  constructor() {
-    this.postService = new PostService();
-  }
+  constructor(private readonly postService: PostService) {}
 
   public async createPost(req: Request, res: Response, next: NextFunction) {
     try {

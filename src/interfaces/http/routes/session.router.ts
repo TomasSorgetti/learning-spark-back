@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { SessionController } from "../controllers/SessionController";
 import authenticateToken from "../../../infrastructure/middlewares/authenticateToken";
+import { container } from "../../../infrastructure/di/container";
 
 export class SessionRouter {
   public router: Router;
@@ -8,7 +9,7 @@ export class SessionRouter {
 
   constructor() {
     this.router = Router();
-    this.sessionController = new SessionController();
+    this.sessionController = new SessionController(container.sessionService);
     this.initializeRoutes();
   }
 

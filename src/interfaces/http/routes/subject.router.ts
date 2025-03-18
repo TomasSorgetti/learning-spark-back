@@ -4,6 +4,7 @@ import authenticateToken from "../../../infrastructure/middlewares/authenticateT
 import isAdminGuard from "../../../infrastructure/middlewares/isAdminGuard";
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import { CreateorUpdateSubjectDTO } from "../../../application/dtos/CreateorUpdateSubjectDTO";
+import { container } from "../../../infrastructure/di/container";
 
 export class SubjectRouter {
   public router: Router;
@@ -11,7 +12,7 @@ export class SubjectRouter {
 
   constructor() {
     this.router = Router();
-    this.subjectController = new SubjectController();
+    this.subjectController = new SubjectController(container.subjectService);
     this.initializeRoutes();
   }
 

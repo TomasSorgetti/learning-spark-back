@@ -7,9 +7,8 @@ interface CustomRequest extends Request {
 }
 
 export class SessionController {
-  private sessionService: SessionService;
-  constructor() {
-    this.sessionService = new SessionService();
+  constructor(
+    private readonly sessionService: SessionService) {
   }
 
   public async getAllSessions(

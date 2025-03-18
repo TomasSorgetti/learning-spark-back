@@ -2,10 +2,9 @@ import { SubSubjectRepositoryImpl } from "../../infrastructure/database/reposito
 import { RedisCache } from "../../infrastructure/redis/RedisCache";
 
 export class SubSubjectService {
-  private subSubjectRepository: SubSubjectRepositoryImpl;
-  constructor() {
-    this.subSubjectRepository = new SubSubjectRepositoryImpl();
-  }
+  constructor(
+    private readonly subSubjectRepository: SubSubjectRepositoryImpl
+  ) {}
 
   public async createSubSubject(
     name: string,
