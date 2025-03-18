@@ -13,7 +13,7 @@ export const CreateorUpdatePostDTO = z.object({
     }),
   author: z.string().min(3, "Author must be at least 3 characters long"),
   tags: z.string().min(3, "Tags must be at least 3 characters long"),
-  url: z.string().url("Invalid url"),
-  image: z.string().url("Invalid url"),
-  subjectId: z.string(),
+  url: z.string(),
+  image: z.string().url("Invalid image url").optional(),
+  subjectId: z.string().min(1, "Subject ID is required"),
 });

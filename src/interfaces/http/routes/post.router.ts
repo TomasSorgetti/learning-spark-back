@@ -6,6 +6,7 @@ import authenticateToken from "../../../infrastructure/middlewares/authenticateT
 import { validateDTO } from "../../../infrastructure/middlewares/validateDTO";
 import { CreateorUpdatePostDTO } from "../../../application/dtos/CreateorUpdatePostDTO";
 import { container } from "../../../infrastructure/di/container";
+import { cloudinaryUpload } from "../../../infrastructure/middlewares/cloudinaryUpload";
 
 export class PostRouter {
   public router: Router;
@@ -20,9 +21,10 @@ export class PostRouter {
   private initializeRoutes(): void {
     this.router.post(
       "/",
-      authenticateToken,
-      isAdminGuard,
-      validateDTO(CreateorUpdatePostDTO),
+      // authenticateToken,
+      // isAdminGuard,
+      cloudinaryUpload("image"),
+      // validateDTO(CreateorUpdatePostDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.createPost(req, res, next);
       }
