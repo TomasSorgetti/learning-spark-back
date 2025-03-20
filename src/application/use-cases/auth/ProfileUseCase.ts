@@ -9,13 +9,14 @@ export class ProfileUseCase {
       throw new BadRequestError("Fields are required.");
     }
     const user = await this.userService.getUserById(userId);
+
     if (!user) {
       throw new BadRequestError("User not found");
     }
     if (user && user.deleted) {
       throw new BadRequestError("User deleted");
     }
-    if (user && !user.validated) {
+    if (user && !user.emailVerified) {
       throw new BadRequestError("User not validated");
     }
 

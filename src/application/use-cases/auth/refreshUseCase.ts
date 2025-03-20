@@ -27,7 +27,7 @@ export class RefreshUseCase {
     if (user && user.deleted) {
       throw new BadRequestError("User deleted");
     }
-    if (user && !user.validated) {
+    if (user && !user.emailVerified) {
       throw new BadRequestError("User not validated");
     }
 
