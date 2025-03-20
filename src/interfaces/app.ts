@@ -26,7 +26,7 @@ export class App {
       })
     );
     this.app.use(cookieParser());
-    this.app.use(limiter);
+    // this.app.use(limiter);
   }
 
   private initializeRoutes() {

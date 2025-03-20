@@ -7,6 +7,7 @@ export interface IPost extends Document {
   tags: string[];
   url: string;
   image: string;
+  views: number;
   subjectId: string;
 
   createdAt: Date;
@@ -21,7 +22,7 @@ const PostSchema: Schema = new Schema(
     tags: { type: [String], required: true },
     url: { type: String, required: true },
     image: { type: String, required: true },
-
+    views: { type: Number, default: 0 },
     subjectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Subject",

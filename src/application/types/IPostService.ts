@@ -7,3 +7,17 @@ export interface IPost {
   image: string;
   subjectId: string;
 }
+export interface IGetPostParams {
+  page: number;
+  limit: number;
+  sort: "desc" | "asc";
+  search?: string;
+  subject?: string;
+}
+
+export interface IGetPostResponse {
+  posts: IPost[];
+  total: number;
+  page: number;
+  limit: number;
+}

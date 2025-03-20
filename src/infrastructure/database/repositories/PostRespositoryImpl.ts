@@ -1,6 +1,14 @@
 import { IPost, PostModel } from "../models/subjects/PostSchema";
 import { IPostRepository } from "../../../domain/repositories/IPostRepository";
 import { ConflictError } from "../../../shared/utils/app-errors";
+import { SortOrder } from "mongoose";
+
+interface PostFilterOptions {
+  where?: any;
+  orderBy?: { title: string };
+  skip?: number;
+  take?: number;
+}
 
 export class PostRepositoryImpl implements IPostRepository {
   async create(post: Partial<IPost>): Promise<IPost> {
@@ -37,10 +45,55 @@ export class PostRepositoryImpl implements IPostRepository {
     if (!post) {
       throw new ConflictError(`Post with url ${url} not found`);
     }
+    post.views++;
+    await post.save();
     return post;
   }
 
-  async getAll(): Promise<IPost[]> {
-    return PostModel.find().populate("subjectId").exec();
+  async getAll(options: PostFilterOptions): Promise<IPost[]> {
+    const {
+      where = {},
+      orderBy = { title: -1 },
+      skip = 0,
+      take = 10,
+    } = options;
+
+    const query: any = {};
+    if (where.title) {
+      query.title = { $regex: where.title.contains, $options: "i" };
+    }
+    if (where.subjects) {
+      query.subjectId = { $in: where.subjects.some.name.in };
+    }
+
+    const sort: { title: SortOrder } =
+      orderBy.title === "asc" ? { title: 1 } : { title: -1 };
+
+    return PostModel.find(query)
+      .populate("subjectId")
+      .sort(sort)
+      .skip(skip)
+      .limit(take)
+      .exec();
+  }
+
+  async count(options: { where?: any }): Promise<number> {
+    const { where = {} } = options;
+    const query: any = {};
+    if (where.title) {
+      query.title = { $regex: where.title.contains, $options: "i" };
+    }
+    if (where.subjects) {
+      query.subjectId = { $in: where.subjects.some.name.in };
+    }
+    return PostModel.countDocuments(query).exec();
+  }
+
+  async getTopViewedPosts(): Promise<IPost[]> {
+    return PostModel.find()
+      .sort({ views: -1 })
+      .limit(3)
+      .populate("subjectId")
+      .exec();
   }
 }

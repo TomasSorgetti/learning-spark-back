@@ -5,5 +5,7 @@ export interface IPostRepository {
   update(subject: Partial<IPost>): Promise<IPost | null>;
   delete(subjectId: string): Promise<IPost | null>;
   getByUrl(url: string): Promise<IPost | null>;
-  getAll(): Promise<IPost[]>;
+  getAll(options: any): Promise<IPost[]>;
+  count(options: { where?: any }): Promise<number>;
+  getTopViewedPosts(): Promise<IPost[]>;
 }

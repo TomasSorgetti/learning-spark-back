@@ -20,4 +20,7 @@ export class RedisCache {
   static async delete(key: string): Promise<void> {
     await redisClient.del(key);
   }
+  static async clearAll(): Promise<void> {
+    await redisClient.flushall();
+  }
 }

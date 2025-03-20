@@ -50,7 +50,7 @@ export class PostRouter {
     );
 
     this.router.get(
-      "/:url",
+      "/post/:url",
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.getPost(req, res, next);
       }
@@ -59,6 +59,13 @@ export class PostRouter {
     this.router.get("/", (req: Request, res: Response, next: NextFunction) => {
       this.postController.getAllPosts(req, res, next);
     });
+
+    this.router.get(
+      "/top-viewed",
+      (req: Request, res: Response, next: NextFunction) => {
+        this.postController.getTopViewedPosts(req, res, next);
+      }
+    );
   }
 
   public getRouter() {
