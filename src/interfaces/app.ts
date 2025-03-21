@@ -4,6 +4,9 @@ import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { limiter } from "../infrastructure/middlewares/rateLimiter";
+import session from "express-session";
+import passport from "passport";
+import { googleAuthConfig } from "../infrastructure/config";
 
 export class App {
   private app: Application;
@@ -26,6 +29,16 @@ export class App {
       })
     );
     this.app.use(cookieParser());
+
+    this.app.use(
+      session({
+        secret: googleAuthConfig.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+      })
+    );
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
     // this.app.use(limiter);
   }
 

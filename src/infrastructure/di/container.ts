@@ -31,6 +31,8 @@ import { SubjectService } from "../../application/services/SubjectService";
 import { SubjectRepositoryImpl } from "../database/repositories/SubjectRepositoryImpl";
 import { SubSubjectService } from "../../application/services/SubSubjectService";
 import { SubSubjectRepositoryImpl } from "../database/repositories/SubSubjectRepositoryImpl";
+import { GoogleAuthUseCase } from "../../application/use-cases/auth/GoogleAuthUseCase";
+import { GoogleAuthService } from "../services/GoogleAuthService";
 
 // Repository instances
 const userRepository = new UserRepositoryImpl();
@@ -56,6 +58,7 @@ const categoryService = new CategoryService();
 const postService = new PostService(postRepository);
 const subjectService = new SubjectService(subjectRepository);
 const subSubjectService = new SubSubjectService(subSubjectRepository);
+const googleAuthService = new GoogleAuthService();
 
 // Auth Use Cases
 const registerUserUseCase = new RegisterUserUseCase(
@@ -91,6 +94,16 @@ const resendCodeUseCase = new ResendCodeUseCase(
   cookieService
 );
 
+const googleAuthUseCase = new GoogleAuthUseCase(
+  googleAuthService,
+  userService,
+  roleService,
+  securityService,
+  tokenService,
+  sessionService,
+  cookieService
+);
+
 // User Use Cases
 const changePasswordUseCase = new ChangePasswordUseCase(
   userService,
@@ -103,6 +116,7 @@ export const container = {
   userService,
   sessionService,
   tokenService,
+  googleAuthService,
   roleService,
   categoryService,
   postService,
@@ -114,6 +128,7 @@ export const container = {
   logoutUseCase,
   profileUseCase,
   refreshUseCase,
+  googleAuthUseCase,
   resendCodeUseCase,
   changePasswordUseCase,
   getAllUsersUseCase,

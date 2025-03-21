@@ -26,7 +26,8 @@ export class AuthRouter {
       container.logoutUseCase,
       container.profileUseCase,
       container.refreshUseCase,
-      container.resendCodeUseCase
+      container.resendCodeUseCase,
+      container.googleAuthUseCase
     );
     this.initializeRoutes();
   }
@@ -48,7 +49,7 @@ export class AuthRouter {
         this.authController.register(req, res, next);
       }
     );
-    
+
     this.router.patch(
       "/resend-code",
       (req: Request, res: Response, next: NextFunction) => {
@@ -87,6 +88,20 @@ export class AuthRouter {
       authenticateRefreshToken,
       (req: Request, res: Response, next: NextFunction) => {
         this.authController.refresh(req, res, next);
+      }
+    );
+
+    this.router.get(
+      "/google",
+      (req: Request, res: Response, next: NextFunction) => {
+        this.authController.googleLogin(req, res, next);
+      }
+    );
+
+    this.router.get(
+      "/google/callback",
+      (req: Request, res: Response, next: NextFunction) => {
+        this.authController.googleCallback(req, res, next);
       }
     );
   }

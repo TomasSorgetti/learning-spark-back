@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUser extends Document {
   email: string;
-  password: string;
+  password: string | null;
   name: string;
   roles: mongoose.Types.ObjectId[];
   validated: boolean;
@@ -15,12 +15,13 @@ export interface IUser extends Document {
   }[];
   createdAt: Date;
   updatedAt: Date;
+  provider: string | null;
 }
 
 const UserSchema: Schema = new Schema(
   {
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: false, default: null },
     name: { type: String, required: true },
     roles: [
       {
@@ -36,6 +37,7 @@ const UserSchema: Schema = new Schema(
     purchasedSubTopics: [
       { subTopicId: mongoose.Types.ObjectId, purchasedAt: Date },
     ],
+    provider: { type: String, default: null },
   },
   {
     timestamps: true,

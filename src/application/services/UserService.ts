@@ -26,9 +26,9 @@ export class UserService {
       throw new ConflictError("User already exists");
     }
 
-    const hashedPassword = await this.securityService.hashPassword(
-      userData.password
-    );
+    const hashedPassword = userData.password
+      ? await this.securityService.hashPassword(userData.password)
+      : null;
 
     const validRoles = userData.roles.filter((role) =>
       mongoose.Types.ObjectId.isValid(role)
@@ -42,7 +42,9 @@ export class UserService {
       userData.name,
       userData.email,
       hashedPassword,
-      userData.roles
+      userData.roles,
+      userData.emailVerified,
+      userData.provider
     );
 
     const userPrimitives = user.toPrimitives();

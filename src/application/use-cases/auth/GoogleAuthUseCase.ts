@@ -3,18 +3,31 @@ import {
   NotFoundError,
   GoneError,
   UnauthorizedError,
+  APIError,
+  UnavailableError,
 } from "../../../shared/utils/app-errors";
-
+import { IAuthProvider } from "../../types/IAuthProvider";
 import { UserService } from "../../services/UserService";
-import { ILoginUser } from "../../types/IAuthService";
 import { SecurityService } from "../../../infrastructure/services/SecurityService";
 import { TokenService } from "../../../infrastructure/services/TokenService";
 import { SessionService } from "../../services/SessionService";
 import { CookieService } from "../../../infrastructure/services/CookieService";
+import mongoose from "mongoose";
+import { serverConfig } from "../../../infrastructure/config";
+import { RoleService } from "../../services/RoleService";
 
-export class LoginUseCase {
+type IAuthenticatedUser = {
+  id: string;
+  email: string;
+  name: string;
+  picture?: string;
+};
+
+export class GoogleAuthUseCase {
   constructor(
+    private googleAuthService: IAuthProvider,
     private readonly userService: UserService,
+    private readonly roleService: RoleService,
     private readonly securityService: SecurityService,
     private readonly tokenService: TokenService,
     private readonly sessionService: SessionService,
@@ -23,24 +36,21 @@ export class LoginUseCase {
 
   public async execute(
     res: Response,
-    userData: ILoginUser,
+    authenticatedUser: any,
     userAgent: string
   ): Promise<any> {
-    const existingUser = await this.userService.getUserByEmail(userData.email);
+    const existingUser = await this.userService.getUserByEmail(
+      authenticatedUser.email
+    );
 
-    if (!existingUser) {
-      throw new NotFoundError("Email not found");
-    }
     if (existingUser && existingUser.deleted) {
       throw new GoneError("User deleted");
     }
     if (existingUser && !existingUser.emailVerified) {
       throw new UnauthorizedError("User not verified");
     }
-    if (existingUser && existingUser.provider !== null) {
-      throw new UnauthorizedError(
-        `User logged in with ${existingUser.provider}`
-      );
+    if (existingUser && existingUser.provider !== "google") {
+      throw new UnauthorizedError("User logged with another provider");
     }
     if (
       existingUser &&
@@ -49,50 +59,57 @@ export class LoginUseCase {
     ) {
       throw new UnauthorizedError("User is locked");
     }
-    if (existingUser.loginAttempts >= 8) {
+    if (existingUser && existingUser.loginAttempts >= 8) {
       await this.userService.updateLockUntil(
         existingUser._id,
-        new Date(Date.now() + 10 * 60 * 1000)
+        new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
       );
       await this.userService.updateLoginAttempts(existingUser._id, 0);
       throw new UnauthorizedError(
         "User blocked. Too many login attempts, try again later."
       );
     }
+    let newUser = null;
 
-    const isPasswordValid = await this.securityService.comparePasswords(
-      userData.password,
-      existingUser.password
-    );
-    if (!isPasswordValid) {
-      await this.userService.updateLoginAttempts(
-        existingUser._id,
-        existingUser.loginAttempts + 1 || 1
-      );
-      throw new UnauthorizedError("Incorrect password");
+    if (!existingUser) {
+      const roleId = await this.assignDefaultRole(authenticatedUser.email);
+      const userDataWithRole = { ...authenticatedUser, roles: [roleId] };
+
+      newUser = await this.userService.createUser({
+        name: userDataWithRole.name,
+        email: userDataWithRole.email,
+        password: null,
+        roles: userDataWithRole.roles,
+        emailVerified: true,
+        provider: "google",
+      });
+      if (!newUser) {
+        throw new UnavailableError("Error creating user");
+      }
     }
 
-    await this.userService.updateLoginAttempts(existingUser._id, 0);
-    await this.userService.updateLockUntil(existingUser._id, null);
+    const finalUser = newUser || existingUser;
+
+    await this.userService.updateLoginAttempts(finalUser._id, 0);
+    await this.userService.updateLockUntil(finalUser._id, null);
 
     // create access & refresh token
     const accessToken = this.tokenService.generateAccessToken(
       {
-        sub: existingUser._id,
-        email: existingUser.email,
-        roles: existingUser.roles,
+        sub: finalUser._id,
+        email: finalUser.email,
+        roles: finalUser.roles,
       },
-      userData.rememberme
+      true
     );
     const refreshToken = this.tokenService.generateRefreshToken(
       {
-        sub: existingUser._id,
-        email: existingUser.email,
-        roles: existingUser.roles,
+        sub: finalUser._id,
+        email: finalUser.email,
+        roles: finalUser.roles,
       },
-      userData.rememberme
+      true
     );
-    //! Cookies need to expire longer than jwt
     this.cookieService.createCookie(res, "accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -110,7 +127,7 @@ export class LoginUseCase {
 
     // create session
     const session = await this.sessionService.createSession({
-      userId: existingUser._id,
+      userId: finalUser._id,
       userAgent,
       refreshToken,
     });
@@ -127,9 +144,26 @@ export class LoginUseCase {
     });
 
     return {
-      name: existingUser.name,
-      email: existingUser.email,
-      roles: existingUser.roles,
+      name: finalUser.name,
+      email: finalUser.email,
+      roles: finalUser.roles,
     };
+  }
+
+  private async assignDefaultRole(
+    email: string
+  ): Promise<mongoose.Types.ObjectId> {
+    const roleName = email === serverConfig.OWNER_EMAIL ? "admin" : "user";
+    const role = await this.roleService.getRoleByName(roleName);
+
+    if (!role) {
+      throw new APIError(`Role "${roleName}" not found`);
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(role._id)) {
+      throw new APIError(`Invalid ObjectId for role "${roleName}"`);
+    }
+
+    return role._id;
   }
 }

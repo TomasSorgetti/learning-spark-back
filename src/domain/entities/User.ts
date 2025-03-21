@@ -3,23 +3,29 @@ import mongoose from "mongoose";
 export class User {
   private name: string;
   private email: string;
-  private password: string;
+  private password: string | null;
   private roles: mongoose.Types.ObjectId[];
   private validated: boolean;
   private deleted: boolean;
+  private emailVerified?: boolean | undefined;
+  private provider?: string | null | undefined;
 
   constructor(
     name: string,
     email: string,
-    password: string,
-    roles: mongoose.Types.ObjectId[]
+    password: string | null,
+    roles: mongoose.Types.ObjectId[],
+    emailVerified?: boolean,
+    provider?: string | null | undefined
   ) {
     this.name = name;
     this.email = email;
-    this.password = password;
+    this.password = password || null;
     this.roles = roles;
     this.validated = false;
     this.deleted = false;
+    this.emailVerified = emailVerified || false;
+    this.provider = provider || null;
     this.validate();
   }
 
@@ -31,10 +37,6 @@ export class User {
     //todo => use regex
     if (!this.email || !this.email.includes("@")) {
       throw new Error("A valid email is required");
-    }
-
-    if (!this.password || this.password.length < 8) {
-      throw new Error("Password must be at least 8 characters long");
     }
 
     if (!this.roles || this.roles.length === 0) {
@@ -51,10 +53,21 @@ export class User {
   }
 
   public getPassword(): string {
+    if (!this.password) {
+      return "";
+    }
     return this.password;
   }
   public getRoles(): mongoose.Types.ObjectId[] {
     return this.roles;
+  }
+
+  public getValidated(): boolean {
+    return this.validated;
+  }
+
+  public getDeleted(): boolean {
+    return this.deleted;
   }
 
   public toPrimitives() {
@@ -65,6 +78,8 @@ export class User {
       roles: this.roles,
       validated: this.validated,
       deleted: this.deleted,
+      emailVerified: this.emailVerified,
+      provider: this.provider,
     };
   }
 }

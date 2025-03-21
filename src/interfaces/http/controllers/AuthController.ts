@@ -7,6 +7,8 @@ import { ProfileUseCase } from "../../../application/use-cases/auth/ProfileUseCa
 import { RefreshUseCase } from "../../../application/use-cases/auth/refreshUseCase";
 import { ResendCodeUseCase } from "../../../application/use-cases/auth/ResendCodeUseCase";
 import { RegisterUserUseCase } from "../../../application/use-cases/auth/RegisterUserUseCase";
+import passport from "passport";
+import { GoogleAuthUseCase } from "../../../application/use-cases/auth/GoogleAuthUseCase";
 
 interface CustomRequest extends Request {
   userId?: string;
@@ -21,7 +23,8 @@ export class AuthController {
     private readonly logoutUseCase: LogoutUseCase,
     private readonly profileUseCase: ProfileUseCase,
     private readonly refreshUseCase: RefreshUseCase,
-    private readonly resendCodeUseCase: ResendCodeUseCase
+    private readonly resendCodeUseCase: ResendCodeUseCase,
+    private readonly googleAuthUseCase: GoogleAuthUseCase
   ) {}
 
   public async register(req: Request, res: Response, next: NextFunction) {
@@ -122,5 +125,39 @@ export class AuthController {
     } catch (error: any) {
       next(error);
     }
+  }
+
+  public googleLogin(req: Request, res: Response, next: NextFunction) {
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      prompt: "select_account",
+    })(req, res, next);
+  }
+
+  public async googleCallback(req: Request, res: Response, next: NextFunction) {
+    passport.authenticate("google", { failureRedirect: "/v1/auth/signin" })(
+      req,
+      res,
+      async () => {
+        try {
+          const userAgent = req.get("User-Agent") || "";
+          const user = await this.googleAuthUseCase.execute(
+            res,
+            req.user,
+            userAgent
+          );
+          if (user) {
+            res.redirect("http://localhost:3000/en/auth/login?success=true");
+          }
+        } catch (error: any) {
+          const errorMessage = encodeURIComponent(
+            error.message || "Unknown error"
+          );
+          res.redirect(
+            `http://localhost:3000/en/auth/login?error=${errorMessage}`
+          );
+        }
+      }
+    );
   }
 }
