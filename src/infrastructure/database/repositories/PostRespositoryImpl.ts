@@ -2,6 +2,8 @@ import { IPost, PostModel } from "../models/subjects/PostSchema";
 import { IPostRepository } from "../../../domain/repositories/IPostRepository";
 import { ConflictError } from "../../../shared/utils/app-errors";
 import { SortOrder } from "mongoose";
+import mongoose from "mongoose";
+import { validateUserData } from "../../../shared/validators/userValidator";
 
 interface PostFilterOptions {
   where?: any;
@@ -31,13 +33,54 @@ export class PostRepositoryImpl implements IPostRepository {
     if (!post._id) {
       throw new ConflictError("post ID is required for update");
     }
-    return PostModel.findByIdAndUpdate(post._id, post, {
-      new: true,
-    }).exec();
+
+    const updateData: any = { ...post };
+
+    if (updateData.image == null) {
+      delete updateData.image;
+      delete updateData.imagePublicId;
+    }
+
+    if (typeof updateData.tags === "string") {
+      updateData.tags = updateData.tags
+        .split(",")
+        .map((tag: string) => tag.trim());
+    }
+
+    return PostModel.findByIdAndUpdate(
+      post._id,
+      { $set: updateData },
+      { new: true }
+    ).exec();
   }
 
   async delete(postId: string): Promise<IPost | null> {
-    return PostModel.findByIdAndDelete(postId).exec();
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      console.log("Not a valid ObjectId:", postId);
+      return null;
+    }
+    try {
+      return await PostModel.findByIdAndDelete(postId).exec();
+    } catch (error: any) {
+      if (error.name === "CastError") {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async getPublicImageId(postId: string): Promise<string | null> {
+    const post = await PostModel.findOne({ _id: postId }).exec();
+
+    if (!post) {
+      throw new ConflictError(`Post with url ${postId} not found`);
+    }
+
+    if (!post.imagePublicId) {
+      return null;
+    }
+
+    return post.imagePublicId;
   }
 
   async getByUrl(url: string): Promise<IPost | null> {

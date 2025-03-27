@@ -21,8 +21,8 @@ export class PostRouter {
   private initializeRoutes(): void {
     this.router.post(
       "/",
-      // authenticateToken,
-      // isAdminGuard,
+      authenticateToken,
+      isAdminGuard,
       cloudinaryUpload("image"),
       // validateDTO(CreateorUpdatePostDTO),
       (req: Request, res: Response, next: NextFunction) => {
@@ -34,7 +34,8 @@ export class PostRouter {
       "/:_id",
       authenticateToken,
       isAdminGuard,
-      validateDTO(CreateorUpdatePostDTO),
+      cloudinaryUpload("image"),
+      // validateDTO(CreateorUpdatePostDTO),
       (req: Request, res: Response, next: NextFunction) => {
         this.postController.updatePost(req, res, next);
       }

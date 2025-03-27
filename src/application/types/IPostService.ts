@@ -4,7 +4,8 @@ export interface IPost {
   author: string;
   tags: string[];
   url: string;
-  image: string;
+  image?: string;
+  imagePublicId?: string;
   subjectId: string;
 }
 export interface IGetPostParams {

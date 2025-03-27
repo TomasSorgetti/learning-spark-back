@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import multer from "multer";
-import CloudinaryService from "../services/CloudinaryService";
+import { container } from "../di/container";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -14,13 +14,13 @@ export const cloudinaryUpload = (fieldName: string) => {
       try {
         if (!req.file) return next();
 
-        const cloudinaryService = CloudinaryService;
-        const imageUrl = await cloudinaryService.uploadImage(
+        const cloudinaryImage = await container.cloudinaryService.uploadImage(
           req.file.buffer,
           "posts"
         );
 
-        req.body[fieldName] = imageUrl;
+        req.body[fieldName] = cloudinaryImage.secure_url;
+        req.body[`${fieldName}PublicId`] = cloudinaryImage.public_id;
         next();
       } catch (error) {
         console.error("Cloudinary upload error:", error);

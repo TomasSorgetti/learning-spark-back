@@ -33,6 +33,7 @@ import { SubSubjectService } from "../../application/services/SubSubjectService"
 import { SubSubjectRepositoryImpl } from "../database/repositories/SubSubjectRepositoryImpl";
 import { GoogleAuthUseCase } from "../../application/use-cases/auth/GoogleAuthUseCase";
 import { GoogleAuthService } from "../services/GoogleAuthService";
+import { CloudinaryService } from "../services/CloudinaryService";
 
 // Repository instances
 const userRepository = new UserRepositoryImpl();
@@ -55,7 +56,8 @@ const tokenService = new TokenService();
 const sessionService = new SessionService(sessionRepository);
 const userService = new UserService(securityService, userRepository);
 const categoryService = new CategoryService();
-const postService = new PostService(postRepository);
+const cloudinaryService = new CloudinaryService();
+const postService = new PostService(postRepository, cloudinaryService);
 const subjectService = new SubjectService(subjectRepository);
 const subSubjectService = new SubSubjectService(subSubjectRepository);
 const googleAuthService = new GoogleAuthService();
@@ -113,6 +115,7 @@ const changePasswordUseCase = new ChangePasswordUseCase(
 const getAllUsersUseCase = new GetAllUsersUseCase(userService);
 
 export const container = {
+  cloudinaryService,
   userService,
   sessionService,
   tokenService,

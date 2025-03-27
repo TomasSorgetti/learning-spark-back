@@ -28,7 +28,7 @@ const isAdminGuard = async (
       throw new UnauthorizedError("User deleted");
     }
 
-    if (user && !user.validated) {
+    if (user && !user.emailVerified) {
       throw new UnauthorizedError("User not validated");
     }
 

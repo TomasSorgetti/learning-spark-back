@@ -5,7 +5,7 @@ export interface IUser extends Document {
   password: string | null;
   name: string;
   roles: mongoose.Types.ObjectId[];
-  validated: boolean;
+  emailVerified: boolean;
   deleted: boolean;
   loginAttempts: number;
   lockUntil: Date | null;

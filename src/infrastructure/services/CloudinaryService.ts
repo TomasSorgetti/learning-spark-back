@@ -17,7 +17,7 @@ export class CloudinaryService {
   async uploadImage(
     fileBuffer: Buffer,
     folder: string = "uploads"
-  ): Promise<string> {
+  ): Promise<any> {
     try {
       const result = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -32,7 +32,7 @@ export class CloudinaryService {
         );
         stream.end(fileBuffer);
       });
-      return (result as any).secure_url;
+      return result;
     } catch (error: any) {
       throw new Error(`Failed to upload image to Cloudinary: ${error.message}`);
     }
@@ -52,5 +52,3 @@ export class CloudinaryService {
     }
   }
 }
-
-export default new CloudinaryService();

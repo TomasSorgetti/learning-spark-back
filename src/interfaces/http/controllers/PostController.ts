@@ -6,7 +6,16 @@ export class PostController {
 
   public async createPost(req: Request, res: Response, next: NextFunction) {
     try {
-      const { title, content, author, tags, url, image, subjectId } = req.body;
+      const {
+        title,
+        content,
+        author,
+        tags,
+        url,
+        image,
+        imagePublicId,
+        subjectId,
+      } = req.body;
 
       const response = await this.postService.createPost({
         title,
@@ -15,6 +24,7 @@ export class PostController {
         tags,
         url,
         image,
+        imagePublicId,
         subjectId,
       });
       return res.status(200).json(response);
@@ -25,7 +35,16 @@ export class PostController {
 
   public async updatePost(req: Request, res: Response, next: NextFunction) {
     try {
-      const { title, content, author, tags, url, image, subjectId } = req.body;
+      const {
+        title,
+        content,
+        author,
+        tags,
+        url,
+        image,
+        imagePublicId,
+        subjectId,
+      } = req.body;
       const { _id } = req.params;
 
       const response = await this.postService.updatePost({
@@ -35,6 +54,7 @@ export class PostController {
         tags,
         url,
         image,
+        imagePublicId,
         _id,
         subjectId,
       });
@@ -48,7 +68,7 @@ export class PostController {
     try {
       const { _id } = req.params;
 
-      const response = await this.postService.updatePost(_id);
+      const response = await this.postService.deletePost(_id);
       return res.status(200).json(response);
     } catch (error: any) {
       next(error);
@@ -67,13 +87,7 @@ export class PostController {
   }
 
   public async getAllPosts(req: Request, res: Response, next: NextFunction) {
-    const {
-      page = 1,
-      limit = 10,
-      sort = "desc",
-      search,
-      subject,
-    } = req.query;
+    const { page = 1, limit = 10, sort = "desc", search, subject } = req.query;
 
     const validSort = sort === "asc" || sort === "desc" ? sort : "desc";
     const pageNum = Number(page) || 1;
