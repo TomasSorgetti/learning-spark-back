@@ -24,6 +24,7 @@ export class ProfileUseCase {
       name: user.name,
       email: user.email,
       roles: user.roles,
+      provider: user.provider,
     };
   }
 }

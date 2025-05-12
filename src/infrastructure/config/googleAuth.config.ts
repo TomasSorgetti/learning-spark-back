@@ -8,5 +8,5 @@ export const googleAuthConfig = {
   GOOGLE_CLIENT_SECRET:
     process.env.GOOGLE_CLIENT_SECRET || "TU_GOOGLE_CLIENT_SECRET",
   CALLBACK_URL:
-    process.env.CALLBACK_URL || "http://localhost:8080/auth/google/callback",
+    process.env.CALLBACK_URL || "http://localhost:8080/v1/auth/google/callback",
 };
